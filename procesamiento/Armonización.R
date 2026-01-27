@@ -5,17 +5,6 @@ library(janitor)
 library(dplyr)
 library(psych)
 
-ENS_2003_Ministerio_de_Salud_Chile_Dpto_Epidemiología_VENT_DEF2022 <- read_sav("C:/Users/yello/Desktop/salud publica/semilla cecan/bases de datos ens con defunciones/base defunciones 2022/ENS_2003_Ministerio_de_Salud_Chile_Dpto_Epidemiología_VENT+DEF2022.sav")
-View(ENS_2003_Ministerio_de_Salud_Chile_Dpto_Epidemiología_VENT_DEF2022)
-ENS_DEF2003<-ENS_2003_Ministerio_de_Salud_Chile_Dpto_Epidemiología_VENT_DEF2022
-
-ENCUESTA_NACIONAL_DE_SALUD_ENS_2009_2010_DEPTO_EPIDEMIOLOGIA_MINSAL_comuna_DEF2022 <- read_sav("C:/Users/yello/Desktop/salud publica/semilla cecan/bases de datos ens con defunciones/base defunciones 2022/ENCUESTA NACIONAL DE SALUD-ENS 2009-2010, DEPTO.EPIDEMIOLOGIA, MINSAL__comuna +DEF2022.sav")
-View(ENCUESTA_NACIONAL_DE_SALUD_ENS_2009_2010_DEPTO_EPIDEMIOLOGIA_MINSAL_comuna_DEF2022)
-ENS_DEF2009<-ENCUESTA_NACIONAL_DE_SALUD_ENS_2009_2010_DEPTO_EPIDEMIOLOGIA_MINSAL_comuna_DEF2022
-
-Base_de_datos_Encuesta_Nacional_de_Salud_2016_2017_ENS_Formulario_1_2_EX_MINSAL_EPI_2_CIDI_SF_Comuna_metales_pesados_EQ5D_DEF2022 <- read_sav("C:/Users/yello/Desktop/salud publica/semilla cecan/bases de datos ens con defunciones/base defunciones 2022/Base de datos Encuesta Nacional de Salud 2016-2017(ENS).Formulario 1_2_EX.MINSAL_EPI. (2)_CIDI_SF_Comuna_metales pesados_ EQ5D+DEF2022.sav")
-View(Base_de_datos_Encuesta_Nacional_de_Salud_2016_2017_ENS_Formulario_1_2_EX_MINSAL_EPI_2_CIDI_SF_Comuna_metales_pesados_EQ5D_DEF2022)
-ENS_DEF2017<-Base_de_datos_Encuesta_Nacional_de_Salud_2016_2017_ENS_Formulario_1_2_EX_MINSAL_EPI_2_CIDI_SF_Comuna_metales_pesados_EQ5D_DEF2022
 
 ENS_DEF2003$ENS <- 2003
 ENS_DEF2009$ENS <- 2010
