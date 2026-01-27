@@ -5,6 +5,9 @@ library(janitor)
 library(dplyr)
 library(psych)
 
+### Leer bases
+
+
 
 ENS_DEF2003$ENS <- 2003
 ENS_DEF2009$ENS <- 2010
