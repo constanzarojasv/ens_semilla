@@ -5,6 +5,10 @@ library(janitor)
 library(dplyr)
 library(psych)
 
+#LEER BASES
+ENS_DEF2003 <- read_sav("input/data-raw/ENS2003/ENS2003_DEF_2022.sav")
+ENS_DEF2009 <- read_sav("input/data-raw/ENS2009/ENS2009_DEF_2022.sav")
+ENS_DEF2016 <- read_sav("input/data-raw/ENS2016/ENS2016_DEF_2022.sav")
 
 ENS_DEF2003$ENS <- 2003
 ENS_DEF2009$ENS <- 2010
