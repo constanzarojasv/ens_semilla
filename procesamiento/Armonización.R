@@ -6,6 +6,8 @@ library(dplyr)
 library(psych)
 library(labelled)
 library(car)
+library(lubridate)
+
 
 #LEER BASES DEFUNCIONES
 ENS_DEF2003 <- read_sav("input/data-raw/ENS2003/ENS2003_DEF_2022.sav")
@@ -406,6 +408,227 @@ ENS_DEF2009$afcolon_conver <- recode(as.numeric(ENS_DEF2009$afcolon),
 
 table(ENS_DEF2009$afcolon, ENS_DEF2009$afcolon_conver)
 
+#CREAR VARIABLE EXPOSICION AF FAMILIAR
+#ENS 2009
+# RECODIFICO TODOS LOS ANTECEDENTES FAMILIARES A BINARIO 0 Y 1
+ENS_DEF2009$afmama_recod <- ifelse(ENS_DEF2009$afmama_conver == 1, 1,
+                             ifelse(ENS_DEF2009$afmama_conver == 2, 0, NA))
+ENS_DEF2009$afvesicula_recod <- ifelse(ENS_DEF2009$afvesicula_conver == 1, 1,
+                                 ifelse(ENS_DEF2009$afvesicula_conver == 2, 0, NA))
+ENS_DEF2009$afgastrico_recod <- ifelse(ENS_DEF2009$afgastrico_conver == 1, 1,
+                                 ifelse(ENS_DEF2009$afgastrico_conver == 2, 0, NA))
+ENS_DEF2009$aftiroides_recod <- ifelse(ENS_DEF2009$aftiroides_conver == 1, 1,
+                                 ifelse(ENS_DEF2009$aftiroides_conver == 2, 0, NA))
+ENS_DEF2009$afcolon_recod <- ifelse(ENS_DEF2009$afcolon_conver == 1, 1,
+                              ifelse(ENS_DEF2009$afcolon_conver == 2, 0, NA))
+
+table(ENS_DEF2009$afmama_recod, ENS_DEF2009$afmama_conver)
+
+#CREO VARIABLE BINARIA (AL MENOS 1 ANTECEDENTE FAMLIIAR DE CANCER)
+ENS_DEF2009$af_total_cancer <- apply(
+  ENS_DEF2009[, c("afmama_recod", 
+            "afvesicula_recod", 
+            "afgastrico_recod", 
+            "aftiroides_recod", 
+            "afcolon_recod")],
+  1,
+  function(x) {
+    if (all(is.na(x))) {
+      return(NA)
+    } else {
+      return(sum(x, na.rm = TRUE))
+    }
+  }
+)
+
+
+
+ENS_DEF2009$af_cancer_binaria <- ifelse(ENS_DEF2009$af_total_cancer > 0, 1,
+                                  ifelse(ENS_DEF2009$af_total_cancer == 0, 0, NA))
+
+tabyl(ENS_DEF2009$af_cancer_binaria)
+
+#RECODIFICO ENS 2016 
+ENS_DEF2017$afmama_recod <- ifelse(ENS_DEF2017$afmama_conver == 1, 1,
+                                   ifelse(ENS_DEF2017$afmama_conver == 2, 0, NA))
+ENS_DEF2017$afvesicula_recod <- ifelse(ENS_DEF2017$afvesicula_conver == 1, 1,
+                                       ifelse(ENS_DEF2017$afvesicula_conver == 2, 0, NA))
+ENS_DEF2017$afgastrico_recod <- ifelse(ENS_DEF2017$afgastrico_conver == 1, 1,
+                                       ifelse(ENS_DEF2017$afgastrico_conver == 2, 0, NA))
+ENS_DEF2017$aftiroides_recod <- ifelse(ENS_DEF2017$aftiroides_conver == 1, 1,
+                                       ifelse(ENS_DEF2017$aftiroides_conver == 2, 0, NA))
+ENS_DEF2017$afcolon_recod <- ifelse(ENS_DEF2017$afcolon_conver == 1, 1,
+                                    ifelse(ENS_DEF2017$afcolon_conver == 2, 0, NA))
+
+table(ENS_DEF2017$afmama_recod, ENS_DEF2017$afmama_conver)
+
+#CONSTRUYO VARIABLE BINARIA AF CANCER ENS 2016
+ENS_DEF2017$af_total_cancer <- apply(
+  ENS_DEF2017[, c("afmama_recod", 
+                  "afvesicula_recod", 
+                  "afgastrico_recod", 
+                  "aftiroides_recod", 
+                  "afcolon_recod")],
+  1,
+  function(x) {
+    if (all(is.na(x))) {
+      return(NA)
+    } else {
+      return(sum(x, na.rm = TRUE))
+    }
+  }
+)
+
+ENS_DEF2017$af_cancer_binaria <- ifelse(ENS_DEF2017$af_total_cancer > 0, 1,
+                                        ifelse(ENS_DEF2017$af_total_cancer == 0, 0, NA))
+
+tabyl(ENS_DEF2017$af_cancer_binaria)
+
+#ARMONIZAR AUDIT 
+#ENS 2017
+ars_1 <- c("m7p9", "m7p10a", "m7p11a", "m7p11b", "m7p11c",
+            "m7p12", "m7p13", "m7p14", "m7p15", "m7p16")
+
+for (var in vars_1) {
+  ENS_DEF2017[[paste0(var, "_conver")]] <- recode(as.numeric(ENS_DEF2017[[var]]), 
+                                                  "1=0; 2=1; 3=2; 4=3; 5=4; else=NA")
+}
+
+ENS_DEF2017$m7p17_conver <- recode(as.numeric(ENS_DEF2017$m7p17), "1=0; 2=2; 3=4; else=NA")
+ENS_DEF2017$m7p18_conver <- recode(as.numeric(ENS_DEF2017$m7p18), "1=0; 2=2; 3=4; else=NA")
+
+# AUDIT_a: usa m7p11a_conver
+ENS_DEF2017$AUDIT_pa <- ifelse(
+  !is.na(ENS_DEF2017$m7p9_conver),
+  rowSums(ENS_DEF2017[, c("m7p9_conver", "m7p10a_conver", "m7p11a_conver",
+                          "m7p12_conver", "m7p13_conver", "m7p14_conver",
+                          "m7p15_conver", "m7p16_conver", "m7p17_conver",
+                          "m7p18_conver")], na.rm = TRUE),
+  NA
+)
+
+# AUDIT_b: usa m7p11b_conver
+ENS_DEF2017$AUDIT_pb <- ifelse(
+  !is.na(ENS_DEF2017$m7p9_conver),
+  rowSums(ENS_DEF2017[, c("m7p9_conver", "m7p10a_conver", "m7p11b_conver",
+                          "m7p12_conver", "m7p13_conver", "m7p14_conver",
+                          "m7p15_conver", "m7p16_conver", "m7p17_conver",
+                          "m7p18_conver")], na.rm = TRUE),
+  NA
+)
+
+# AUDIT_c: usa m7p11c_conver
+ENS_DEF2017$AUDIT_pc <- ifelse(
+  !is.na(ENS_DEF2017$m7p9_conver),
+  rowSums(ENS_DEF2017[, c("m7p9_conver", "m7p10a_conver", "m7p11c_conver",
+                          "m7p12_conver", "m7p13_conver", "m7p14_conver",
+                          "m7p15_conver", "m7p16_conver", "m7p17_conver",
+                          "m7p18_conver")], na.rm = TRUE),
+  NA
+)
+
+#AUDIT 2009
+for (var in vars_1) {
+  ENS_DEF2009[[paste0(var, "_conver")]] <- recode(as.numeric(ENS_DEF2009[[var]]), 
+                                                  "1=0; 2=1; 3=2; 4=3; 5=4; else=NA")
+}
+
+ENS_DEF2009$m7p17_conver <- recode(as.numeric(ENS_DEF2009$m7p17), "1=0; 2=2; 3=4; else=NA")
+ENS_DEF2009$m7p18_conver <- recode(as.numeric(ENS_DEF2009$m7p18), "1=0; 2=2; 3=4; else=NA") 
+
+# AUDIT_a: usa m7p11a_conver
+ENS_DEF2009$AUDIT_pa <- ifelse(
+  !is.na(ENS_DEF2009$m7p9_conver),
+  rowSums(ENS_DEF2009[, c("m7p9_conver", "m7p10a_conver", "m7p11a_conver",
+                          "m7p12_conver", "m7p13_conver", "m7p14_conver",
+                          "m7p15_conver", "m7p16_conver", "m7p17_conver",
+                          "m7p18_conver")], na.rm = TRUE),
+  NA
+)
+
+# AUDIT_b: usa m7p11b_conver
+ENS_DEF2009$AUDIT_pb <- ifelse(
+  !is.na(ENS_DEF2009$m7p9_conver),
+  rowSums(ENS_DEF2009[, c("m7p9_conver", "m7p10a_conver", "m7p11b_conver",
+                          "m7p12_conver", "m7p13_conver", "m7p14_conver",
+                          "m7p15_conver", "m7p16_conver", "m7p17_conver",
+                          "m7p18_conver")], na.rm = TRUE),
+  NA
+)
+
+# AUDIT_c: usa m7p11c_conver
+ENS_DEF2009$AUDIT_pc <- ifelse(
+  !is.na(ENS_DEF2009$m7p9_conver),
+  rowSums(ENS_DEF2009[, c("m7p9_conver", "m7p10a_conver", "m7p11c_conver",
+                          "m7p12_conver", "m7p13_conver", "m7p14_conver",
+                          "m7p15_conver", "m7p16_conver", "m7p17_conver",
+                          "m7p18_conver")], na.rm = TRUE),
+  NA
+) 
+
+#ya están creados AUDIT_pa y AUDIT_pb en ambos dataframes
+ENS_DEF2017$Sexo
+#Ahora crear categorías considerando Sexo
+ENS_DEF2017$AUDIT_RIESGOSO <- NA
+
+# Hombres (Sexo == 1)
+ENS_DEF2017$AUDIT_RIESGOSO[ENS_DEF2017$Sexo == 1 & ENS_DEF2017$AUDIT_pb >= 8] <- 1
+ENS_DEF2017$AUDIT_RIESGOSO[ENS_DEF2017$Sexo == 1 & ENS_DEF2017$AUDIT_pb < 8]  <- 0
+
+# Mujeres (Sexo == 2)
+ENS_DEF2017$AUDIT_RIESGOSO[ENS_DEF2017$Sexo == 2 & ENS_DEF2017$AUDIT_pa >= 8] <- 1
+ENS_DEF2017$AUDIT_RIESGOSO[ENS_DEF2017$Sexo == 2 & ENS_DEF2017$AUDIT_pa < 8]  <- 0
+
+table(ENS_DEF2017$AUDIT_RIESGOSO) # 1==Sí 2==No
+
+#Ahora lo mismo pero en ENS 2009
+ENS_DEF2009$SEXO
+ENS_DEF2009$AUDIT_RIESGOSO <- NA
+
+# Hombres (Sexo == 1)
+ENS_DEF2009$AUDIT_RIESGOSO[ENS_DEF2009$SEXO == 1 & ENS_DEF2009$AUDIT_pb >= 8] <- 1
+ENS_DEF2009$AUDIT_RIESGOSO[ENS_DEF2009$SEXO == 1 & ENS_DEF2009$AUDIT_pb < 8]  <- 0
+
+# Mujeres (Sexo == 2)
+ENS_DEF2009$AUDIT_RIESGOSO[ENS_DEF2009$SEXO == 2 & ENS_DEF2009$AUDIT_pa >= 8] <- 1
+ENS_DEF2009$AUDIT_RIESGOSO[ENS_DEF2009$SEXO == 2 & ENS_DEF2009$AUDIT_pa < 8]  <- 0
+
+tabyl(ENS_DEF2009$AUDIT_RIESGOSO) # 1==Sí 2==No
+tabyl(ENS_DEF2017$AUDIT_RIESGOSO)
+
+#ARMONIZAR ANTECEDENTE PERSONAL DE CANCER
+#ENS2009
+ENS_DEF2009$cancer[!is.na(ENS_DEF2009$m6p14)|!is.na(ENS_DEF2009$m10p2A)]<-0
+ENS_DEF2009$cancer[ENS_DEF2009$m6p14==1]<-1
+ENS_DEF2009$cancer[ENS_DEF2009$m10p2A==1]<-1
+tabyl(ENS_DEF2009$m6p14)
+tabyl(ENS_DEF2009$m10p2A)
+tabyl(ENS_DEF2009$cancer)
+
+# m6p14. ¿Alguna vez un doctor o médico le ha dicho que tiene o que padece de Cáncer de mama?	
+# m10p2A. ¿Alguna vez un doctor o médico le ha dicho que tiene o que padece de Cáncer de tiroides?
+
+
+#ENS2017
+ENS_DEF2017$m9p2A
+ENS_DEF2017$m9p3A
+ENS_DEF2017$m9p4A
+ENS_DEF2017$m9p5A
+ENS_DEF2017$m9p6A
+ENS_DEF2017$m9p7A
+ENS_DEF2017$m9p8A
+ENS_DEF2017$cancer<-NA
+ENS_DEF2017$cancer[!is.na(ENS_DEF2017$m9p2A)|!is.na(ENS_DEF2017$m9p3A)|!is.na(ENS_DEF2017$m9p4A)|!is.na(ENS_DEF2017$m9p5A)|
+                     !is.na(ENS_DEF2017$m9p6A)|!is.na(ENS_DEF2017$m9p7A)|!is.na(ENS_DEF2017$m9p8A)]<-0
+ENS_DEF2017$cancer[ENS_DEF2017$m9p2A==1]<-1
+ENS_DEF2017$cancer[ENS_DEF2017$m9p3A==1]<-1
+ENS_DEF2017$cancer[ENS_DEF2017$m9p4A==1]<-1
+ENS_DEF2017$cancer[ENS_DEF2017$m9p5A==1]<-1
+ENS_DEF2017$cancer[ENS_DEF2017$m9p6A==1]<-1
+ENS_DEF2017$cancer[ENS_DEF2017$m9p7A==1]<-1
+ENS_DEF2017$cancer[ENS_DEF2017$m9p8A==1]<-1
+tabyl(ENS_DEF2017$cancer)
+
 #ARMONIZAR CANCER
 ENS_DEF2003$DIAG1
 ENS_DEF2009$DIAG1
@@ -444,7 +667,6 @@ class(ENS_DEF2003$FECHA_DEF)
 class(ENS_DEF2009$FECHA_DEF)
 class(ENS_DEF2017$FECHA_DEF)
 
-library(lubridate)
 #fecha de fin de seguimiento
 FECHA_finSeg <- dmy("31-12-2022")
 
@@ -547,8 +769,8 @@ ENS_DEF2009 <- ENS_DEF2009 %>%
 table(ENS_DEF2009$no_fallecidos, useNA = "always")
 #aqui hay 742 muertos=564+178
 
-##fallecidos
-#2003
+##FALLECIDOS
+# ENS 2003
 ENS_DEF2003 <- ENS_DEF2003 %>%
   mutate(fallecidos = case_when(
     muerte_cancer ==1 ~ 1,
@@ -558,7 +780,7 @@ ENS_DEF2003 <- ENS_DEF2003 %>%
   ))
 table(ENS_DEF2003$fallecidos, useNA = "always")
 
-#2009
+#ENS 2009
 ENS_DEF2009 <- ENS_DEF2009 %>%
   mutate(fallecidos = case_when(
     muerte_cancer ==1 ~ 1,
@@ -568,8 +790,7 @@ ENS_DEF2009 <- ENS_DEF2009 %>%
   ))
 table(ENS_DEF2009$fallecidos, useNA = "always")
 
-#############################################
-#crear variable exposición
+#CREAR VARIABLE EXPOSICION DEPRESION
 
 #script armonizacion depresion esta pregunta no tiene NA
 table(ENS_DEF2003$p52)
