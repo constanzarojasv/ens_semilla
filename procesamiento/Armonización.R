@@ -1,15 +1,18 @@
 
-#####importar las bases de datos
+#CARGAR LIBRERIAS
 library(haven)
 library(janitor)
 library(dplyr)
 library(psych)
+library(labelled)
+library(car)
 
-#LEER BASES
+#LEER BASES DEFUNCIONES
 ENS_DEF2003 <- read_sav("input/data-raw/ENS2003/ENS2003_DEF_2022.sav")
 ENS_DEF2009 <- read_sav("input/data-raw/ENS2009/ENS2009_DEF_2022.sav")
-ENS_DEF2016 <- read_sav("input/data-raw/ENS2016/ENS2016_DEF_2022.sav")
+ENS_DEF2017 <- read_sav("input/data-raw/ENS2016/ENS2016_DEF_2022.sav")
 
+#AGREGAR VARIABLE ENS CON EL AÑO EN QUE SE HIZO LA ENS
 ENS_DEF2003$ENS <- 2003
 ENS_DEF2009$ENS <- 2010
 ENS_DEF2017$ENS <- 2017
@@ -17,19 +20,19 @@ table(ENS_DEF2003$ENS)
 table(ENS_DEF2009$ENS)
 table(ENS_DEF2017$ENS)
 
-#####evaluar la variable depresión en las 3 ens
+#VARIABLES DE "DEPRESIÓN"
 ENS_DEF2003$p52
 ENS_DEF2009$sd1
 ENS_DEF2017$sd1_F1
 ENS_DEF2017$Sospecha_Depresion
 
-#####armonizar id
+#ARMONIZAR ID
 ENS_DEF2003$folio
 ENS_DEF2017$IdEncuesta
 names(ENS_DEF2003)[names(ENS_DEF2003) == "folio"] <- "ID"
 names(ENS_DEF2017)[names(ENS_DEF2017) == "IdEncuesta"] <- "ID"
 
-#####evaluar la variable edad en todas las ens 
+#ARMONIZAR VARIABLE EDAD
 class(ENS_DEF2003$edad)
 class(ENS_DEF2009$EDAD)
 names(ENS_DEF2009)[names(ENS_DEF2009) == "EDAD"] <- "edad"
@@ -38,11 +41,12 @@ class(ENS_DEF2017$Edad)
 names(ENS_DEF2017)[names(ENS_DEF2017) == "Edad"] <- "edad"
 class(ENS_DEF2017$edad)
 
-#####evaluar la variable sexo en todas las ENS
+#EVALUAR VARIABLE SEXO
 class(ENS_DEF2003$sexo)
 class(ENS_DEF2009$SEXO)
 class(ENS_DEF2017$Sexo)
 
+#ARMONIZAR VARIABLE SEXO
 ENS_DEF2003$sexo<-as.factor(ENS_DEF2003$sexo)
 ENS_DEF2009$SEXO<-as.factor(ENS_DEF2009$SEXO)
 ENS_DEF2017$Sexo<-as.factor(ENS_DEF2017$Sexo)
@@ -53,11 +57,12 @@ class(ENS_DEF2009$sexo)
 names(ENS_DEF2017)[names(ENS_DEF2017) == "Sexo"] <- "sexo"
 class(ENS_DEF2017$sexo)
 
+#CHEQUEAR VARIABLE SEXO CONSTRUIDA
 ENS_DEF2003$sexo
 ENS_DEF2009$sexo
 ENS_DEF2017$sexo
 
-#####evaluar nivel educacional en las tres ens (ojo en todas estan como 1=<8 años,2=8-12 años y 3=>13 años)
+#ARMONIZAR VARIABLE NEDU
 ENS_DEF2003$VAR00010
 ENS_DEF2003$VAR00035
 names(ENS_DEF2003)[names(ENS_DEF2003) == "VAR00035"] <- "NEDU"
@@ -75,6 +80,7 @@ ENS_DEF2003$NEDU<-as.factor(ENS_DEF2003$NEDU)
 ENS_DEF2009$NEDU<-as.factor(ENS_DEF2009$NEDU)
 ENS_DEF2017$NEDU<-as.factor(ENS_DEF2017$NEDU)
 
+#CHEQUEAR VARIABLE NEDU
 table(ENS_DEF2003$NEDU)
 table(ENS_DEF2009$NEDU)
 table(ENS_DEF2017$NEDU)
@@ -83,7 +89,7 @@ ENS_DEF2003$NEDU
 ENS_DEF2009$NEDU
 ENS_DEF2017$NEDU
 
-#evaluar la variable rural/urbano como 1=urbano y 2 rural
+#EVALUAR VARIABLE ZONA (1=URBANO, 2 = RURAL)
 ENS_DEF2003$zona
 ENS_DEF2009$ZONA
 ENS_DEF2017$Zona
@@ -102,59 +108,61 @@ class(ENS_DEF2009$zona)
 names(ENS_DEF2017)[names(ENS_DEF2017) == "Zona"] <- "zona"
 class(ENS_DEF2017$zona)
 
-#####variable país de nacimiento (solo se encuentra en ens 2009 y 2017) 1=chile. 2= otro por lo que no se usa al igual que etnia
-# y país de nacimiento y estado civil
-
-
-## Armonizar variable peso 
+# ARMONIZAR VARIABLE PESO
 ENS_DEF2003$peso
 ENS_DEF2009$peso<-ENS_DEF2009$m5p1
 ENS_DEF2017$peso<-ENS_DEF2017$m4p1 ## Falta: -7777, -8888, -9999 dejarlos como missings
 
+#LIMPIAR MISSING VALUES DE ENS 2003 
 ENS_DEF2003$peso ##aqui 999.9 es NA y son 19 personas
 summary(ENS_DEF2003$peso)
 sum(ENS_DEF2003$peso == 999.9, na.rm = TRUE)
 ENS_DEF2003$peso[ENS_DEF2003$peso == 999.9] <- NA
 
+# LIMPIAR MISSING VALUES DE ENS 2009
 ENS_DEF2009$peso ##aqui 777, 888 y 999 son NA y son 44 personas
 summary(ENS_DEF2009$peso)
 sum(ENS_DEF2009$peso %in% c(777, 888, 999), na.rm = TRUE)
 ENS_DEF2009$peso[ENS_DEF2009$peso %in% c(777, 888, 999)] <- NA
 
+# LIMPIAR MISSING VALUES DE ENS 2017
 ENS_DEF2017$peso ##aqui -9999,-8888 y -7777 son NA y hay 0 personas
 summary(ENS_DEF2017$peso)
 sum(ENS_DEF2017$peso %in% c(-7777, -8888, -9999), na.rm = TRUE)
 sum(ENS_DEF2017$peso %in% c(7777, 8888, 9999), na.rm = TRUE)
 
-## Armonizar variable talla
+# ARMONIZAR VARIABLE TALLA
 ENS_DEF2003$talla #aqui 999.9 es missing
 ENS_DEF2009$talla<-ENS_DEF2009$m5p2
 ENS_DEF2017$talla<-ENS_DEF2017$m4p2  
 
+#LIMPIAR MISSING ENS 2003 
 ENS_DEF2003$talla #aqui 999.9 es missing son 21 personas
 sum(ENS_DEF2003$talla == 999.9, na.rm = TRUE)
 ENS_DEF2003$talla[ENS_DEF2003$talla == 999.9] <- NA
 summary(ENS_DEF2003$talla)
 
+# LIMPIAR MISSING ENS 2009
 ENS_DEF2009$talla #aqui 777, 888 y 999 es missing y son 64 personas
 sum(ENS_DEF2009$talla %in% c(777, 888, 999), na.rm = TRUE)
 ENS_DEF2009$talla[ENS_DEF2009$talla %in% c(777, 888, 999)] <- NA
 summary(ENS_DEF2009$talla)
 
+# LIMPIAR MISSING ENS 2017
 ENS_DEF2017$talla #aqui -7777, -8888 y -9999 es missing y son 0 personas
 summary(ENS_DEF2017$talla)
 sum(ENS_DEF2017$talla %in% c(-7777, -8888, -9999), na.rm = TRUE)
 sum(ENS_DEF2017$talla %in% c(7777, 8888, 9999), na.rm = TRUE)
 
-## Calcular variable IMC
+# CREAR VARIABLE IMC 
 ENS_DEF2003$imc<-ENS_DEF2003$peso/((ENS_DEF2003$talla/100)^2)
 ENS_DEF2009$imc<-ENS_DEF2009$peso/((ENS_DEF2009$talla/100)^2)
-ENS_DEF2017$imc<-ENS_DEF2017$peso/((ENS_DEF2017$talla/100)^2) ## Falta dejar como missing IMC con pesos y tallas NA (ya los deje NA antes)
+ENS_DEF2017$imc<-ENS_DEF2017$peso/((ENS_DEF2017$talla/100)^2) 
 summary(ENS_DEF2003$imc)
 summary(ENS_DEF2009$imc)
 summary(ENS_DEF2017$imc)
 
-#crear variable estado nutricional
+#CREAR VARIABLE ESTADO NUTRICIONAL 
 ENS_DEF2003 <- ENS_DEF2003 %>%
   mutate(estado_nutricional = case_when(
     imc < 18.5 ~ "Enflaquecido",
@@ -184,6 +192,30 @@ ENS_DEF2017 <- ENS_DEF2017 %>%
     TRUE ~ NA_character_   # para valores perdidos o fuera de rango
   ))
 table(ENS_DEF2017$estado_nutricional)
+
+# ARMONIZAR VARIABLE CIRCUNFERENCIA DE CINTURA
+ENS_DEF2009$cintura<-dataset2009$m5p3
+ENS_DEF2017$cintura<-dataset2016$m4p3 ## Falta: -7777, -8888, -9999 dejarlos como missings
+
+#LIMPIAR MISSING VALUES
+ENS_DEF2009 <- ENS_DEF2009 %>%
+  mutate(cintura = zap_labels(cintura),                      # Elimina etiquetas (como 777 = NS/NR)
+         cintura = ifelse(cintura %in% c(777, 888, 999), NA, cintura))  # Reemplaza esos códigos por NA
+summary(ENS_DEF2009$cintura)
+
+ENS_DEF2017 <- ENS_DEF2017 %>%
+  mutate(cintura = zap_labels(cintura),  # Elimina etiquetas como -7777 = "No sabe"
+         cintura = ifelse(cintura %in% c(-7777, -8888, -9999), NA, cintura))  # Reemplaza esos valores por NA
+
+summary(ENS_DEF2017$cintura)
+
+## Calcular variable índice cintura talla
+ENS_DEF2009$ict<-ENS_DEF2009$cintura / ENS_DEF2009$talla
+ENS_DEF2017$ict<-ENS_DEF2017$cintura / ENS_DEF2017$talla
+
+summary(ENS_DEF2009$ict)
+summary(ENS_DEF2017$ict)
+
 
 ###creo "Edad_codificada" en ens 2003 y 2009
 ENS_DEF2003$Edad_Codificada <- cut(ENS_DEF2003$edad,
