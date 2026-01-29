@@ -1,0 +1,96 @@
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(haven)
+
+
+ens2003_armonizada <- read_sav("input/data-raw/ensarmonizadas/ens2003_armonizada.sav")
+ens2009_armonizada <- read_sav("input/data-raw/ensarmonizadas/ens2009_armonizada.sav")
+ens2017_armonizada <- read_sav("input/data-raw/ensarmonizadas/ens2017_armonizada.sav")
+
+
+
+# ==============================================================================
+# 1. DEFINICIÓN DE LA FUNCIÓN DE PROCESAMIENTO
+# ==============================================================================
+procesar_y_unir <- function(df_egresos, df_base_ens, year_label) {
+  
+  message(paste("--- Procesando Cohorte:", year_label, "---"))
+  
+  # --- A. ESTANDARIZACIÓN DE NOMBRES ---
+  # Renombrar solo si las columnas tienen los nombres originales
+  if("folio" %in% names(df_egresos)) df_egresos <- rename(df_egresos, ID = folio)
+  if("DIAG1" %in% names(df_egresos)) df_egresos <- rename(df_egresos, DIAG1_EGR = DIAG1)
+  if("DIAG2" %in% names(df_egresos)) df_egresos <- rename(df_egresos, DIAG2_EGR = DIAG2)
+  
+  # Asegurar que ID sea caracter en ambas bases para el join
+  df_egresos$ID <- as.character(df_egresos$ID)
+  # Asumimos que la base ENS tiene una columna ID o folio que también pasamos a char
+  if("folio" %in% names(df_base_ens)) df_base_ens <- rename(df_base_ens, ID = folio)
+  df_base_ens$ID <- as.character(df_base_ens$ID)
+  
+  # --- B. LIMPIEZA DE FECHAS ---
+  # Forzamos formato fecha. Ajusta el 'origin' si tus datos vienen numéricos de Excel
+  df_egresos$FECHA_EGR <- as.Date(df_egresos$FECHA_EGR)
+  
+  # --- C. BANDERA DE CÁNCER (CIE-10) ---
+  patron_cancer <- "^(C|D0|D3|D4)"
+  excluir_codigo <- "D469"
+  
+  df_clean <- df_egresos %>%
+    mutate(
+      match_d1 = grepl(patron_cancer, DIAG1_EGR, ignore.case = TRUE) & DIAG1_EGR != excluir_codigo,
+      match_d2 = grepl(patron_cancer, DIAG2_EGR, ignore.case = TRUE) & DIAG2_EGR != excluir_codigo,
+      flag_cancer = if_else(match_d1 | match_d2, 1, 0)
+    ) %>%
+    # Ordenar: Prioridad Cáncer (1) > Fecha más antigua
+    arrange(ID, desc(flag_cancer), FECHA_EGR) %>%
+    # Colapsar por paciente
+    group_by(ID) %>%
+    mutate(
+      n_hospitalizaciones = n(),
+      primer_diag_cancer = ifelse(any(flag_cancer == 1), 
+                                  DIAG1_EGR[which(flag_cancer == 1)[1]], 
+                                  NA_character_)
+    ) %>%
+    slice(1) %>% # Nos quedamos con el mejor registro
+    ungroup() %>%
+    select(ID, DIAG1_EGR, DIAG2_EGR, FECHA_EGR, flag_cancer, n_hospitalizaciones)
+  
+  # --- D. UNIÓN CON BASE MAESTRA ---
+  df_final <- left_join(df_base_ens, df_clean, by = "ID") %>%
+    mutate(
+      flag_cancer = replace_na(flag_cancer, 0),
+      n_hospitalizaciones = replace_na(n_hospitalizaciones, 0)
+    )
+  
+  message(paste("Filas Base Original:", nrow(df_base_ens)))
+  message(paste("Filas Base Unida:   ", nrow(df_final)))
+  
+  return(df_final)
+}
+
+# ==============================================================================
+# 2. EJECUCIÓN PARA LAS 3 COHORTES
+# ==============================================================================
+
+# NOTA: Asegúrate de tener cargadas en tu ambiente las bases "madre":
+# ENS_DEF2003, ENS_DEF2009, ENS_DEF2017 (o como se llamen tus bases de encuesta/defunciones)
+
+# --- AÑO 2003 ---
+ens2003conegreso <- procesar_y_unir(ens2003_armonizada, ENS_DEF2003, "2003")
+
+# --- AÑO 2009 ---
+# Asumiendo que tu base madre se llama ENS_DEF2009
+ens2009conegreso <- procesar_y_unir(ens2009_armonizada, ENS_DEF2009, "2009")
+
+# --- AÑO 2017 ---
+# Asumiendo que tu base madre se llama ENS_DEF2017
+ens2017conegreso <- procesar_y_unir(ens2017_armonizada, ENS_DEF2017, "2017")
+
+# ==============================================================================
+# 3. VERIFICACIÓN RÁPIDA
+# ==============================================================================
+glimpse(ens2003conegreso)
+table(ens2009conegreso$flag_cancer)
+table(ens2017conegreso$flag_cancer)
