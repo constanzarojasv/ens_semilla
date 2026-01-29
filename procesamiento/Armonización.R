@@ -1,3 +1,12 @@
+#INSTALAR PAQUETES
+#install.packages("haven")
+#install.packages("janitor")
+#install.packages("dplyr")
+#install.packages("psych")
+#install.packages("labelled")
+#install.packages("car")
+#install.packages("lubridate")
+#install.packages("tidyr")
 
 #CARGAR LIBRERIAS
 library(haven)
@@ -7,7 +16,8 @@ library(psych)
 library(labelled)
 library(car)
 library(lubridate)
-
+library(tidyr)
+library(readr)
 
 #LEER BASES DEFUNCIONES
 ENS_DEF2003 <- read_sav("input/data-raw/ENS2003/ENS2003_DEF_2022.sav")
@@ -486,7 +496,7 @@ tabyl(ENS_DEF2017$af_cancer_binaria)
 
 #ARMONIZAR AUDIT 
 #ENS 2017
-ars_1 <- c("m7p9", "m7p10a", "m7p11a", "m7p11b", "m7p11c",
+vars_1 <- c("m7p9", "m7p10a", "m7p11a", "m7p11b", "m7p11c",
             "m7p12", "m7p13", "m7p14", "m7p15", "m7p16")
 
 for (var in vars_1) {
@@ -598,12 +608,12 @@ tabyl(ENS_DEF2017$AUDIT_RIESGOSO)
 
 #ARMONIZAR ANTECEDENTE PERSONAL DE CANCER
 #ENS2009
-ENS_DEF2009$cancer[!is.na(ENS_DEF2009$m6p14)|!is.na(ENS_DEF2009$m10p2A)]<-0
-ENS_DEF2009$cancer[ENS_DEF2009$m6p14==1]<-1
-ENS_DEF2009$cancer[ENS_DEF2009$m10p2A==1]<-1
+ENS_DEF2009$ca_activo[!is.na(ENS_DEF2009$m6p14)|!is.na(ENS_DEF2009$m10p2A)]<-0
+ENS_DEF2009$ca_activo[ENS_DEF2009$m6p14==1]<-1
+ENS_DEF2009$ca_activo[ENS_DEF2009$m10p2A==1]<-1
 tabyl(ENS_DEF2009$m6p14)
 tabyl(ENS_DEF2009$m10p2A)
-tabyl(ENS_DEF2009$cancer)
+tabyl(ENS_DEF2009$ca_activo)
 
 # m6p14. ¿Alguna vez un doctor o médico le ha dicho que tiene o que padece de Cáncer de mama?	
 # m10p2A. ¿Alguna vez un doctor o médico le ha dicho que tiene o que padece de Cáncer de tiroides?
@@ -617,17 +627,17 @@ ENS_DEF2017$m9p5A
 ENS_DEF2017$m9p6A
 ENS_DEF2017$m9p7A
 ENS_DEF2017$m9p8A
-ENS_DEF2017$cancer<-NA
-ENS_DEF2017$cancer[!is.na(ENS_DEF2017$m9p2A)|!is.na(ENS_DEF2017$m9p3A)|!is.na(ENS_DEF2017$m9p4A)|!is.na(ENS_DEF2017$m9p5A)|
+ENS_DEF2017$ca_activo<-NA
+ENS_DEF2017$ca_activo[!is.na(ENS_DEF2017$m9p2A)|!is.na(ENS_DEF2017$m9p3A)|!is.na(ENS_DEF2017$m9p4A)|!is.na(ENS_DEF2017$m9p5A)|
                      !is.na(ENS_DEF2017$m9p6A)|!is.na(ENS_DEF2017$m9p7A)|!is.na(ENS_DEF2017$m9p8A)]<-0
-ENS_DEF2017$cancer[ENS_DEF2017$m9p2A==1]<-1
-ENS_DEF2017$cancer[ENS_DEF2017$m9p3A==1]<-1
-ENS_DEF2017$cancer[ENS_DEF2017$m9p4A==1]<-1
-ENS_DEF2017$cancer[ENS_DEF2017$m9p5A==1]<-1
-ENS_DEF2017$cancer[ENS_DEF2017$m9p6A==1]<-1
-ENS_DEF2017$cancer[ENS_DEF2017$m9p7A==1]<-1
-ENS_DEF2017$cancer[ENS_DEF2017$m9p8A==1]<-1
-tabyl(ENS_DEF2017$cancer)
+ENS_DEF2017$ca_activo[ENS_DEF2017$m9p2A==1]<-1
+ENS_DEF2017$ca_activo[ENS_DEF2017$m9p3A==1]<-1
+ENS_DEF2017$ca_activo[ENS_DEF2017$m9p4A==1]<-1
+ENS_DEF2017$ca_activo[ENS_DEF2017$m9p5A==1]<-1
+ENS_DEF2017$ca_activo[ENS_DEF2017$m9p6A==1]<-1
+ENS_DEF2017$ca_activo[ENS_DEF2017$m9p7A==1]<-1
+ENS_DEF2017$ca_activo[ENS_DEF2017$m9p8A==1]<-1
+tabyl(ENS_DEF2017$ca_activo)
 
 #ARMONIZAR CANCER
 ENS_DEF2003$DIAG1
@@ -961,6 +971,9 @@ base2003 <- ENS_DEF2003[, c("ID","Sd1_1", "Sd14_1", "Sd4_1", "Sd5_1", "Sd6_1", "
 base2009 <- ENS_DEF2009[, c("ID","Sd1_1", "Sd14_1", "Sd4_1", "Sd5_1", "Sd6_1", "Sd8_1", "Sd9_1", "Sd10_1", "Sd11_1", "Sd12_1", "Sd13_1", "Sd16_1", "Sd17_1", "Sd18_1", "Sd20_1", "Sd21_1", "Sd22_1", "Sd23_1", "Sd24_1", "Sd25_1", "ENS", "edad")]
 base2017 <- ENS_DEF2017[, c("ID","Sd1_1", "Sd14_1", "Sd4_1", "Sd5_1", "Sd6_1", "Sd8_1", "Sd9_1", "Sd10_1", "Sd11_1", "Sd12_1", "Sd13_1", "Sd16_1", "Sd17_1", "Sd18_1", "Sd20_1", "Sd21_1", "Sd22_1", "Sd23_1", "Sd24_1", "Sd25_1", "ENS", "edad")]
 
+#Leer base ENSPassi
+ENSt2 <- read_rds("input/data-raw/ENSPassi/ENStt2.rds")
+
 #unir las tres bases
 ENSt2 <- rbind(base2003, base2009, base2017)
 table(ENS_DEF2003$Sd25_1)
@@ -1210,78 +1223,19 @@ ENS_DEF2017 <- ENS_DEF2017 %>%
 table(ENS_DEF2017$Depresion_1_AP, useNA = "always")
 
 ################################################################
-###creo variable de exclusion (ca activo) en la ENS 2003 no se preguntó
-###ENS 2009
-ENS_DEF2009$m6p14
-table(ENS_DEF2009$m6p14)
-ENS_DEF2009$m10p2A
-table (ENS_DEF2009$m10p2A)
-ENS_DEF2009$m6p14[ENS_DEF2009$m6p14 == 3] <- NA
-ENS_DEF2009$m10p2A[ENS_DEF2009$m10p2A == 3] <- NA
-
-ENS_DEF2009$ca_activo <- ifelse(ENS_DEF2009$m6p14 == 1 | ENS_DEF2009$m10p2A == 1, 1,
-                            ifelse(is.na(ENS_DEF2009$m6p14) | is.na(ENS_DEF2009$m10p2A), NA, 0))
-table (ENS_DEF2009$ca_activo)
-##30 PERSONAS
-
-###ca activo en ENS 2016, 1° recodifico opciones
-table(ENS_DEF2017$m9p2A)
-table(ENS_DEF2017$m9p3A)
-
-ENS_DEF2017 <- ENS_DEF2017 %>%
-  mutate(across(
-    .cols = c(m9p2A, m9p3A, m9p4A, m9p5A, m9p6A, m9p7A, m9p8A, m9p8A_esp),
-    .fns = ~ case_when(
-      .x == 1 ~ 1,
-      .x == 2 ~ 0,
-      .x == -8888 ~ NA_integer_,
-      TRUE ~ NA_integer_ 
-    )
-  ))
-table(ENS_DEF2017$m9p2A)
-table(ENS_DEF2017$m9p3A)
-table(ENS_DEF2017$m9p4A)
-table(ENS_DEF2017$m9p5A)
-table(ENS_DEF2017$m9p6A)
-table(ENS_DEF2017$m9p7A)
-table(ENS_DEF2017$m9p8A)
-table(ENS_DEF2017$m9p8A_esp)
-##189 eventos
-
-###paso eventos a personas
-library(dplyr)
-
-vars <- c("m9p2A", "m9p3A", "m9p4A", "m9p5A", "m9p6A", "m9p7A", "m9p8A")
-
-ENS_DEF2017 <- ENS_DEF2017 %>%
-  rowwise() %>%
-  mutate(ca_activo = if_any(all_of(vars), ~ . == 1) * 1) %>% # dará 1 si hay algún 1
-  ungroup()
-
-# Contar personas con y sin cáncer activo
-table(ENS_DEF2017$ca_activo, useNA = "ifany")
-###254 personas
-
-ENS_DEF2003$fact_af1
-str(ENS_DEF2003)
 
 ############################################
 #primero necesito agregar la variable fexp, strata y conglomerado de la base de datos de alvaro passi
 ##########################################
 ## 1. Leo el dataframe de álvaro (Cuidado nombre parecido)
-df0_o<-readRDS("C:/Users/yello/Desktop/salud publica/semilla cecan/muestra compleja ens 2003/ENStt2.rds", refhook = NULL)
+df0_o<-readRDS("input/data-raw/ENSPassi/ENS_estrato.rds", refhook = NULL)
 df0<-df0_o
-
-library(tidyr)
-library(dplyr)
 
 #separo IDunicoENS
 df0 <- df0 %>%
   separate(IDunicoENS, into = c("ENS", "ID"), sep = " ")
 
 #me quedo solo con ens 2003
-library(dplyr)
-
 df2003 <- df0 %>%
   filter(ENS == 2003)
 
@@ -1297,36 +1251,46 @@ ENS_DEF2003 <- ENS_DEF2003 %>%
   )
 
 
-###3. Necesito sacar a los <25 años y los con ca_activo=1 en ENS_DEF2003####
+###EXLUSIONES
+#La variable de cáncer activo se creo previamente
+#ENS2003 no tiene la variable de cáncer activo
+ENS_DEF2009$ca_activo
+ENS_DEF2017$ca_activo
 
-##Número de persona <25 años 2003
+#CREO SUB BASE CON EXCLUSIONES: ENS 2003
+##Número de persona <25 años 
 sum(ENS_DEF2003$edad < 25, na.rm = TRUE)
 
-###ahora si saco a los <25 años y los con ca activo=1###
+#SE CREA SUB BASE
 ENS2003conexc <- ENS_DEF2003 %>%
   filter(edad >= 25)
 summary (ENS2003conexc$edad)
+
+#CHEQUEO MUERTE POR CANCER EN NUEVA BASE
 table(ENS2003conexc$muerte_cancer)
 
-###3. Necesito sacar a los <25 años y los con ca_activo=1 en ENS_DEF2009####
+#EXCLUSIONES ENS 2009: MENORES DE 25 Y CANCER ACTIVO (ca_activo == 1)
 # Número de personas <25 años 2009
-sum(ENS_DEF2009$edad < 25, na.rm = TRUE)
-
-##Número de persona <25 años 2009
 sum(ENS_DEF2009$edad < 25, na.rm = TRUE)
 table(ENS_DEF2009$edad<25, ENS_DEF2009$ca_activo)
 
-###ahora si saco a los <25 años y los con ca activo=1###
-
+#SE CREA NUEVA BASE
 ENS2009conexc <- ENS_DEF2009 %>%
   filter(edad >= 25, ca_activo != 1 | is.na(ca_activo))
 summary (ENS2009conexc$edad)
+
+#CHEQUEO NUEVA BASE
 table(ENS2009conexc$ca_activo)
 table(ENS2009conexc$muerte_cancer)
 
-####Sacar en 2016##
+##EXCLUSIONES EN ENS 2017: MISMOS CRITERIOS QUE ENS 2009
 ENS2016conexc <- ENS_DEF2017 %>%
   filter(edad >= 25, ca_activo != 1 | is.na(ca_activo))
 summary (ENS2016conexc$edad)
 table(ENS2016conexc$ca_activo)
 table(ENS2016conexc$muerte_cancer)
+
+#Guardar bases
+write_rds(ENS2003conexc, "input/data-procesada/armonizadas/ens2003_armonizada.rds")
+write_rds(ENS2009conexc, "input/data-procesada/armonizadas/ens2009_armonizada.rds")
+write_rds(ENS2016conexc, "input/data-procesada/armonizadas/ens2016_armonizada.rds")
