@@ -243,8 +243,6 @@ ENS_DEF2009$Edad_Codificada <- cut(ENS_DEF2009$edad,
 ENS_DEF2009$Edad_Codificada
 
 ##armonizo fechas de encuestas al estilo date en la ENS 2009 
-library(dplyr)
-
 ENS_DEF2009 <- ENS_DEF2009 %>%
   mutate(
     fecha_encuesta = as.Date(
@@ -265,8 +263,6 @@ ENS_DEF2017 <- ENS_DEF2017 %>%
 class(ENS_DEF2017$fecha_encuesta)
 
 ###TABACO###1:si//0:no//
-library(haven)
-
 class(ENS_DEF2003$p111)
 ENS_DEF2003$p111<-as.numeric(ENS_DEF2003$p111)
 class(ENS_DEF2003$p112)
@@ -289,8 +285,7 @@ ENS_DEF2017$fuma <- ifelse(ENS_DEF2017$ta3 %in% c(1, 2), 1,
                        ifelse(ENS_DEF2017$ta3 %in% c(3, 4), 0, NA))
 tabyl(ENS_DEF2017$fuma)
 
-###
-#actividad física
+#ACTIVIDAD (NO GPAQ)
 ENS_DEF2003$p133
 ENS_DEF2003$a17<-ENS_DEF2003$p133
 ENS_DEF2003$a17[ENS_DEF2003$a17==9]<-NA
@@ -298,7 +293,120 @@ ENS_DEF2009$a17
 ENS_DEF2009$a17[ENS_DEF2009$a17==9]<-NA
 ENS_DEF2017$a17
 
-#armonizar cáncer
+# ACTIVIDAD FISICA (GPAQ)
+ENS_DEF2017$GPAQ
+ENS_DEF2009$GPAQ
+
+#ARMONIZAR ANTECEDENTE FAMLIARES DE CANCER (2009 Y 2017)
+ENS_DEF2017$af1d #Cáncer de mama
+ENS_DEF2017$af1e #Cáncer de vesícula o vía biliar
+ENS_DEF2017$af1f #Cáncer gástrico
+ENS_DEF2017$af1g #Cáncer de tiroides
+ENS_DEF2017$af2d #Cáncer de colon
+
+ENS_DEF2009$af1d #Cáncer de mama
+ENS_DEF2009$af1e #Cáncer de vesícula o vía biliar
+ENS_DEF2009$af1f #Cáncer gástrico
+ENS_DEF2009$af1g #Cáncer de colon
+ENS_DEF2009$af1h #Cáncer de tiroides
+
+#ARMONIZACION AF MAMA
+ENS_DEF2017$afmama <- ENS_DEF2017$af1d
+table(ENS_DEF2017$afmama, ENS_DEF2017$af1d)
+ENS_DEF2009$afmama <- ENS_DEF2009$af1d
+table(ENS_DEF2009$afmama, ENS_DEF2009$af1d)
+ENS_DEF2017$afmama
+ENS_DEF2009$afmama
+ENS_DEF2017$afmama_conver <- recode(as.numeric(ENS_DEF2017$afmama), 
+                                    "1=1; 2=2; else=NA")  # Sí = 1 NO = 2
+
+table(ENS_DEF2017$afmama, ENS_DEF2017$afmama_conver)
+
+ENS_DEF2009$afmama_conver <- recode(as.numeric(ENS_DEF2009$afmama), 
+                                    "1=1; 2=2; else=NA")  # Sí = 1 NO = 2
+
+table(ENS_DEF2009$afmama, ENS_DEF2009$afmama_conver)
+
+#ARMONIZACION DE AF VESICULA
+ENS_DEF2017$afvesicula <- ENS_DEF2017$af1e
+table(ENS_DEF2017$afvesicula, ENS_DEF2017$af1e)
+ENS_DEF2009$afvesicula <- ENS_DEF2009$af1e
+table(ENS_DEF2009$afvesicula, ENS_DEF2009$af1e)
+
+ENS_DEF2017$afvesicula
+ENS_DEF2017$afvesicula_conver <- recode(as.numeric(ENS_DEF2017$afvesicula), 
+                                    "1=1; 2=2; else=NA")  # Sí = 1 NO = 2
+
+table(ENS_DEF2017$afvesicula, ENS_DEF2017$afvesicula_conver)
+
+
+ENS_DEF2009$afvesicula
+ENS_DEF2009$afvesicula_conver <- recode(as.numeric(ENS_DEF2009$afvesicula), 
+                                    "1=1; 2=2; else=NA")  # Sí = 1 NO = 2
+
+table(ENS_DEF2009$afvesicula, ENS_DEF2009$afvesicula_conver)
+
+#ARMONIZACION AF GASTRICO
+ENS_DEF2017$afgastrico <- ENS_DEF2017$af1f
+table(ENS_DEF2017$afgastrico, ENS_DEF2017$af1f)
+ENS_DEF2009$afgastrico <- ENS_DEF2009$af1f
+table(ENS_DEF2009$afgastrico, ENS_DEF2009$af1f)
+
+ENS_DEF2017$afgastrico
+ENS_DEF2017$afgastrico_conver <- recode(as.numeric(ENS_DEF2017$afgastrico), 
+                                        "1=1; 2=2; else=NA")  # Sí = 1 NO = 2
+
+table(ENS_DEF2017$afgastrico, ENS_DEF2017$afgastrico_conver)
+
+
+ENS_DEF2009$afgastrico
+ENS_DEF2009$afgastrico_conver <- recode(as.numeric(ENS_DEF2009$afgastrico), 
+                                        "1=1; 2=2; else=NA")  # Sí = 1 NO = 2
+
+table(ENS_DEF2009$afgastrico, ENS_DEF2009$afgastrico_conver)
+
+#ARMONIZACION AF TIROIDES
+ENS_DEF2017$aftiroides <- ENS_DEF2017$af1g
+table(ENS_DEF2017$aftiroides, ENS_DEF2017$af1g)
+ENS_DEF2009$aftiroides <- ENS_DEF2009$af1h
+table(ENS_DEF2009$aftiroides, ENS_DEF2009$af1h)
+
+ENS_DEF2017$aftiroides
+ENS_DEF2017$aftiroides_conver <- recode(as.numeric(ENS_DEF2017$aftiroides), 
+                                        "1=1; 2=2; else=NA")  # Sí = 1 NO = 2
+
+table(ENS_DEF2017$aftiroides, ENS_DEF2017$aftiroides_conver)
+
+
+ENS_DEF2009$aftiroides
+ENS_DEF2009$aftiroides_conver <- recode(as.numeric(ENS_DEF2009$aftiroides), 
+                                        "1=1; 2=2; else=NA")  # Sí = 1 NO = 2
+
+table(ENS_DEF2009$aftiroides, ENS_DEF2009$aftiroides_conver)
+
+#ARMONIZACION AF COLON
+ENS_DEF2017$afcolon <- ENS_DEF2017$af2d
+table(ENS_DEF2017$afcolon, ENS_DEF2017$af2d) #Ojo que en 2017 se categoriza distinto (preguntan por edad)
+ENS_DEF2009$afcolon <- ENS_DEF2009$af1g 
+table(ENS_DEF2009$afcolon, ENS_DEF2009$af1g)
+ENS_DEF2017$afcolon
+ENS_DEF2009$afcolon
+
+
+ENS_DEF2017$afcolon
+ENS_DEF2017$afcolon_conver <- recode(as.numeric(ENS_DEF2017$afcolon), 
+                                        "1=1; 2=1; 3=2; else=NA")  # Sí = 1 NO = 2
+
+table(ENS_DEF2017$afcolon, ENS_DEF2017$afcolon_conver)
+
+
+ENS_DEF2009$afcolon
+ENS_DEF2009$afcolon_conver <- recode(as.numeric(ENS_DEF2009$afcolon), 
+                                        "1=1; 2=2; else=NA")  # Sí = 1 NO = 2
+
+table(ENS_DEF2009$afcolon, ENS_DEF2009$afcolon_conver)
+
+#ARMONIZAR CANCER
 ENS_DEF2003$DIAG1
 ENS_DEF2009$DIAG1
 ENS_DEF2017$DIAG1
