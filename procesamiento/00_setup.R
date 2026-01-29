@@ -1,5 +1,5 @@
 #1. INSTALAR PAQUETES
-#install.packages(c(
+# install.packages(c(
 #  "haven",
 #  "janitor",
 #  "dplyr",
@@ -8,7 +8,9 @@
 #  "car",
 #  "lubridate",
 #  "tidyr",
-#  "readr"
+#  "readr",
+#  "gtsummary",
+#  "survey"
 # ))
 
 #2. CARGAR LIBRERIAS
@@ -21,3 +23,5 @@ library(car)
 library(lubridate)
 library(tidyr)
 library(readr)
+library(gtsummary)
+library(survey)

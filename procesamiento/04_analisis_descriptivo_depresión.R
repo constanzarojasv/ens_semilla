@@ -1,5 +1,5 @@
-library(gtsummary)
-library(survey)
+#Cargar setup (librerías)
+source("procesamiento/00_setup.R", encoding = "UTF-8")
 
 class(ENS2003conexc_confekm$Depresion_1_AP)
 table(ENS2003conexc_confekm$Depresion_1_AP)

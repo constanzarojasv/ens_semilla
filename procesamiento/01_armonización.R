@@ -1,4 +1,4 @@
-#Cargar setup (librerías)
+# 0. Cargar setup (librerías)
 source("procesamiento/00_setup.R", encoding = "UTF-8")
 
 #LEER BASES DEFUNCIONES
