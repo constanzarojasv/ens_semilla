@@ -194,10 +194,17 @@ ENS_DEF2017 <- ENS_DEF2017 %>%
 table(ENS_DEF2017$estado_nutricional)
 
 # ARMONIZAR VARIABLE CIRCUNFERENCIA DE CINTURA
-ENS_DEF2009$cintura<-dataset2009$m5p3
-ENS_DEF2017$cintura<-dataset2016$m4p3 ## Falta: -7777, -8888, -9999 dejarlos como missings
+ENS_DEF2003$cintura<-ENS_DEF2003$cintura
+ENS_DEF2009$cintura<-ENS_DEF2009$m5p3
+ENS_DEF2017$cintura<-ENS_DEF2017$m4p3 ## Falta: -7777, -8888, -9999 dejarlos como missings
 
 #LIMPIAR MISSING VALUES
+
+ENS_DEF2003$cintura #aqui 999.9 es missing son 21 personas
+sum(ENS_DEF2003$cintura == 999.9, na.rm = TRUE)
+ENS_DEF2003$cintura[ENS_DEF2003$cintura == 999.9] <- NA
+summary(ENS_DEF2003$cintura)
+
 ENS_DEF2009 <- ENS_DEF2009 %>%
   mutate(cintura = zap_labels(cintura),                      # Elimina etiquetas (como 777 = NS/NR)
          cintura = ifelse(cintura %in% c(777, 888, 999), NA, cintura))  # Reemplaza esos códigos por NA
@@ -210,6 +217,7 @@ ENS_DEF2017 <- ENS_DEF2017 %>%
 summary(ENS_DEF2017$cintura)
 
 ## Calcular variable índice cintura talla
+ENS_DEF2003$ict<-ENS_DEF2003$cintura / ENS_DEF2003$talla
 ENS_DEF2009$ict<-ENS_DEF2009$cintura / ENS_DEF2009$talla
 ENS_DEF2017$ict<-ENS_DEF2017$cintura / ENS_DEF2017$talla
 
