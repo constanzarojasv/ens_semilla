@@ -1,3 +1,14 @@
+library(haven)
+library(readr)
+
+ens2003_egr <- read_sav("input/data-raw/ENS2003/ens2003_egr.sav")
+ens2009_egr <- read_sav("input/data-raw/ENS2009/ens2009_egr.sav")
+ens2016_egr <- read_sav("input/data-raw/ENS2016/ens2016_egr.sav")
+
+ENS_DEF2003 <- read_rds("input/data-procesada/armonizadas/ens2003_armonizada.rds")
+ENS_DEF2009 <- read_rds("input/data-procesada/armonizadas/ens2009_armonizada.rds")
+ENS_DEF2016 <- read_rds("input/data-procesada/armonizadas/ens2016_armonizada.rds")
+
 #unir bases de datos de defunciones y de egresos hospitalarios
 ens2003_egr <- ens2003_egr %>%
   rename(DIAG1_EGR = DIAG1)
@@ -10,11 +21,11 @@ ens2003_egr <- ens2003_egr %>%
 
 # ver si tengo los mismos ID en ambas bases de datos
 setequal(ENS_DEF2003$ID, ens2003_egr$ID)
+setequal(ENS_DEF2003$ID, egresos_final$ID)
 
 class(ens2003_egr$FECHA_EGR)
 
 #primero quiero ver si hay id repetidos con diag1 de cancer
-library(dplyr)
 
 # 1. Definimos la condición de interés para no repetirla
 # Usamos DIAG1_EGR como indicas para el filtro de texto
@@ -41,6 +52,8 @@ length(unique(ids_con_al_menos_un_cancer$ID))
 length(unique(ids_repetidos_sin_nada_de_cancer$ID))
 print(ids_con_al_menos_un_cancer, n = 50)
 print(ids_repetidos_sin_nada_de_cancer, n = 50)
+
+
 
 #############################################################################################
 #ahora uno mis bases de datos
