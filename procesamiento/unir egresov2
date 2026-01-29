@@ -2,12 +2,12 @@ library(dplyr)
 library(tidyr)
 library(lubridate)
 library(haven)
+library(readr)
 
-
-ens2003_armonizada <- read_sav("input/data-procesada/armonizadas/ens2003_armonizada.sav")
-ens2009_armonizada <- read_sav("input/data-procesada/armonizadas/ens2009_armonizada.sav")
-ens2017_armonizada <- read_sav("input/data-procesada/armonizadas/ens2017_armonizada.sav")
-
+ens2003_armonizada <- read_rds("input/data-procesada/armonizadas/ens2003_armonizada.rds")
+ens2009_armonizada <- read_rds("input/data-procesada/armonizadas/ens2009_armonizada.rds")
+ens2017_armonizada <- read_rds("input/data-procesada/armonizadas/ens2017_armonizada.rds")
+df_egresos <- read_sav("input/data-raw/ENS2003/ens2003_egr.sav")
 
 
 # ==============================================================================
