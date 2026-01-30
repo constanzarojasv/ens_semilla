@@ -1,11 +1,19 @@
 #Cargar setup (librerías)
 source("procesamiento/00_setup.R", encoding = "UTF-8")
 
-class(ens2003_analisis$Depresion_1_AP)
-table(ENS2003conexc$Depresion_1_AP)
+ens2003_final <- read_rds("input/data-procesada/data-analisis/ens2003_final.rds")
+ens2009_final <- read_rds("input/data-procesada/data-analisis/ens2009_final.rds")
+ens2016_final <- read_rds("input/data-procesada/data-analisis/ens2016_final.rds")
+
+
+class(ens2003_final$Depresion_1_AP)
+ens2003_final$Depresion_1_AP<-as.factor(ens2003_final$Depresion_1_AP)
+class(ens2003_final$Depresion_1_AP)
+table(ens2003_final$Depresion_1_AP)
 
 # --- 1️⃣ Preparar variables ---
-ENS2003conexc_confekm <- ENS2003conexc_confekm %>%
+class(ens2003_final$Depresion_1_AP)
+ens2003_final <- ens2003_final %>%
   mutate(
     tiempo_total = dias_transcurridos / 365.25,       # convertir días a años
     evento_total = muerte_cancer,                     # evento sin censura
@@ -14,15 +22,18 @@ ENS2003conexc_confekm <- ENS2003conexc_confekm %>%
                           labels = c("No muertos por cáncer", "Muertes por cáncer"))
   )
 
-
 # --- 2️⃣ Diseño de encuesta ---
-survey_designkm2003 <- svydesign(
+# 1. Definir el diseño original con todos los datos
+survey_design2003 <- svydesign(
   id = ~conglomerado_,
   strata = ~estrato_,
   weights = ~FEXP1,
-  data = ENS2003conexc_confekm,
+  data = ens2003_final,
   nest = TRUE
 )
+
+# 2. Crear un subconjunto para la variable específica (esto mantiene la integridad del diseño)
+survey_designkm2003 <- subset(survey_design2003, !is.na(Depresion_1_AP))
 options(survey.lonely.psu="adjust")
 
 #2. realizar tabla
