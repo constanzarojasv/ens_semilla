@@ -2,6 +2,9 @@
 source("procesamiento/00_setup.R", encoding = "UTF-8")
 
 ENS_2003_UNIDA <- read_rds("input/data-procesada/defunciones-bind-egresos/ens2003_bind.rds")
+#ENS_2003_UNIDA <- read_rds("input/data-procesada/defunciones-bind-egresos/ens2003_bind.rds")
+#ENS_2003_UNIDA <- read_rds("input/data-procesada/defunciones-bind-egresos/ens2003_bind.rds")
+#MODIFIQUEN CON LA 2009 Y 2016
 
 # 1. Excluir a menores de 25 años en base unida para el análisis (ENS 2003)
 ##Número de personas <25 años 
@@ -17,6 +20,9 @@ table(ENS2003conexc$muerte_cancer)
 
 #GUARDO BASE ENS 2003 UNIDA Y CON EXCLUSIONES PARA ANALISIS
 write_rds(ENS2003conexc, "input/data-procesada/data-analisis/ens2003_analisis.rds")
+
+############################TERMINA ENS 2003##############################
+
 
 ###EXCLUSIONES
 #Antecedente personal de cáncer
