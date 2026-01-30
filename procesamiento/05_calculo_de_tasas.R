@@ -64,16 +64,16 @@ analizar_tasa_5y <- function(datos, variable_grupo, pesos, conglomerado, estrato
 }
 
 # Ejemplo para ENS 2003
-analisis_depresion <- analizar_tasa_5y(
+analisis_depresion_5y <- analizar_tasa_5y(
   datos = ens2003_final,
   variable_grupo = "Depresion_1_AP",
-  pesos = "FEXP1",
-  conglomerado = "conglomerado_",
-  estrato = "estrato_"
+  pesos = "FEXP_analisis",
+  conglomerado = "conglomerado",
+  estrato = "estrato"
 )
 
 # Para ver la tabla:
-print(analisis_depresion$resultados_tabla)
+print(analisis_depresion_5y$resultados_tabla)
 
 # Para ver el p-valor:
-print(analisis_depresion$test_estadistico)
+print(analisis_depresion_5y$test_estadistico)
