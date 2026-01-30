@@ -119,6 +119,7 @@ ENS_DEF2009_ARMONIZADA$ID <- as.character(ENS_DEF2009_ARMONIZADA$ID)
 
 # Verifico la clase de nuevo
 class(ens2009_egr$ID) 
+
 class(ENS_DEF2009_ARMONIZADA$ID)
 
 
