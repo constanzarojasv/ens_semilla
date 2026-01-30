@@ -1226,7 +1226,7 @@ ENS_DEF2003 <- ENS_DEF2003 %>%
 
 # 1. ENS 2003: Crear nueva variable y convertir a numérico
 ENS_DEF2003 <- ENS_DEF2003 %>%
-  mutate(FEXP_analisis = as.numeric(fexp))
+  mutate(FEXP_analisis = as.numeric(fact_af2))
 
 # 2. ENS 2009: Crear nueva variable y convertir a numérico
 ENS_DEF2009 <- ENS_DEF2009 %>%
