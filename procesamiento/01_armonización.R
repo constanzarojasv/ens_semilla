@@ -1261,7 +1261,6 @@ ENS_DEF2017 <- ENS_DEF2017 %>%
   mutate(estrato = as.numeric(Estrato))
 
 
-
 # 1. ENS 2003: Crear variable y convertir
 ENS_DEF2003 <- ENS_DEF2003 %>%
   mutate(conglomerado = as.numeric(as.character(Conglomerado_)))
