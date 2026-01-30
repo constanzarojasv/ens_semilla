@@ -12,7 +12,6 @@ class(ens2003_final$Depresion_1_AP)
 table(ens2003_final$Depresion_1_AP)
 
 # --- 1️⃣ Preparar variables ---
-class(ens2003_final$Depresion_1_AP)
 ens2003_final <- ens2003_final %>%
   mutate(
     tiempo_total = dias_transcurridos / 365.25,       # convertir días a años
@@ -33,11 +32,11 @@ survey_design2003 <- svydesign(
 )
 
 # 2. Crear un subconjunto para la variable específica (esto mantiene la integridad del diseño)
-survey_designkm2003 <- subset(survey_design2003, !is.na(Depresion_1_AP))
+survey_designdepresion2003 <- subset(survey_design2003, !is.na(Depresion_1_AP))
 options(survey.lonely.psu="adjust")
 
 #2. realizar tabla
-tabla1_2003 <- survey_designkm2003 %>% 
+tabla1_depresion_2003 <- survey_designdepresion2003 %>% 
   tbl_svysummary(
     by = Depresion_1_AP, 
     include = c(edad, Edad_Codificada, sexo, NEDU, zona, fuma, estado_nutricional, a17, muerte_cancer, fallecidos),
