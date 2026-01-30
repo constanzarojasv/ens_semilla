@@ -25,9 +25,9 @@ ens2003_final <- ens2003_final %>%
 # --- 2️⃣ Diseño de encuesta ---
 # 1. Definir el diseño original con todos los datos
 survey_design2003 <- svydesign(
-  id = ~conglomerado_,
-  strata = ~estrato_,
-  weights = ~FEXP1,
+  id = ~conglomerado,
+  strata = ~estrato,
+  weights = ~FEXP_analisis,
   data = ens2003_final,
   nest = TRUE
 )
