@@ -559,31 +559,31 @@ ENS_DEF2009$AUDIT_pc <- ifelse(
 ) 
 
 #ya están creados AUDIT_pa y AUDIT_pb en ambos dataframes
-ENS_DEF2017$Sexo
+ENS_DEF2017$sexo
 #Ahora crear categorías considerando Sexo
 ENS_DEF2017$AUDIT_RIESGOSO <- NA
 
 # Hombres (Sexo == 1)
-ENS_DEF2017$AUDIT_RIESGOSO[ENS_DEF2017$Sexo == 1 & ENS_DEF2017$AUDIT_pb >= 8] <- 1
-ENS_DEF2017$AUDIT_RIESGOSO[ENS_DEF2017$Sexo == 1 & ENS_DEF2017$AUDIT_pb < 8]  <- 0
+ENS_DEF2017$AUDIT_RIESGOSO[ENS_DEF2017$sexo == 1 & ENS_DEF2017$AUDIT_pb >= 8] <- 1
+ENS_DEF2017$AUDIT_RIESGOSO[ENS_DEF2017$sexo == 1 & ENS_DEF2017$AUDIT_pb < 8]  <- 0
 
 # Mujeres (Sexo == 2)
-ENS_DEF2017$AUDIT_RIESGOSO[ENS_DEF2017$Sexo == 2 & ENS_DEF2017$AUDIT_pa >= 8] <- 1
-ENS_DEF2017$AUDIT_RIESGOSO[ENS_DEF2017$Sexo == 2 & ENS_DEF2017$AUDIT_pa < 8]  <- 0
+ENS_DEF2017$AUDIT_RIESGOSO[ENS_DEF2017$sexo == 2 & ENS_DEF2017$AUDIT_pa >= 8] <- 1
+ENS_DEF2017$AUDIT_RIESGOSO[ENS_DEF2017$sexo == 2 & ENS_DEF2017$AUDIT_pa < 8]  <- 0
 
 table(ENS_DEF2017$AUDIT_RIESGOSO) # 1==Sí 2==No
 
 #Ahora lo mismo pero en ENS 2009
-ENS_DEF2009$SEXO
+ENS_DEF2009$sexo
 ENS_DEF2009$AUDIT_RIESGOSO <- NA
 
 # Hombres (Sexo == 1)
-ENS_DEF2009$AUDIT_RIESGOSO[ENS_DEF2009$SEXO == 1 & ENS_DEF2009$AUDIT_pb >= 8] <- 1
-ENS_DEF2009$AUDIT_RIESGOSO[ENS_DEF2009$SEXO == 1 & ENS_DEF2009$AUDIT_pb < 8]  <- 0
+ENS_DEF2009$AUDIT_RIESGOSO[ENS_DEF2009$sexo == 1 & ENS_DEF2009$AUDIT_pb >= 8] <- 1
+ENS_DEF2009$AUDIT_RIESGOSO[ENS_DEF2009$sexo == 1 & ENS_DEF2009$AUDIT_pb < 8]  <- 0
 
 # Mujeres (Sexo == 2)
-ENS_DEF2009$AUDIT_RIESGOSO[ENS_DEF2009$SEXO == 2 & ENS_DEF2009$AUDIT_pa >= 8] <- 1
-ENS_DEF2009$AUDIT_RIESGOSO[ENS_DEF2009$SEXO == 2 & ENS_DEF2009$AUDIT_pa < 8]  <- 0
+ENS_DEF2009$AUDIT_RIESGOSO[ENS_DEF2009$sexo == 2 & ENS_DEF2009$AUDIT_pa >= 8] <- 1
+ENS_DEF2009$AUDIT_RIESGOSO[ENS_DEF2009$sexo == 2 & ENS_DEF2009$AUDIT_pa < 8]  <- 0
 
 tabyl(ENS_DEF2009$AUDIT_RIESGOSO) # 1==Sí 2==No
 tabyl(ENS_DEF2017$AUDIT_RIESGOSO)
@@ -682,6 +682,16 @@ ENS_DEF2009 <- ENS_DEF2009 %>%
         FECHA_finSeg,
         FECHA_DEF) - fecha_encuesta))
 sum(ENS_DEF2009$dias_transcurridos < 0, na.rm = TRUE)
+
+ENS_DEF2017 <- ENS_DEF2017 %>%
+  mutate(
+    dias_transcurridos = as.numeric(
+      if_else(
+        is.na(FECHA_DEF),
+        FECHA_finSeg,
+        FECHA_DEF) - fecha_encuesta))
+sum(ENS_DEF2017$dias_transcurridos < 0, na.rm = TRUE)
+
 
 #Hay un caso que fallece antes de la encuesta, se va a eliminar pero después del bind
 
