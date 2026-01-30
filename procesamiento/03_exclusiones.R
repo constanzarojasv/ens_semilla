@@ -20,7 +20,7 @@ summary (ENS2003conexc$edad)
 table(ENS2003conexc$muerte_cancer)
 
 #GUARDO BASE ENS 2003 UNIDA Y CON EXCLUSIONES PARA ANALISIS
-write_rds(ENS2003conexc, "input/data-procesada/data-analisis/ens2003_analisis.rds")
+write_rds(ENS2003conexc, "input/data-procesada/data-analisis/ens2003_final.rds")
 
 ############################TERMINA ENS 2003##############################
 
@@ -54,7 +54,7 @@ dim(ENS2009conexc)
 table(ENS2009conexc$ca_activo)
 table(ENS2009conexc$muerte_cancer)
 
-write_rds(ENS2009conexc, "input/data-procesada/data-analisis/ens2009_analisis.rds")
+write_rds(ENS2009conexc, "input/data-procesada/data-analisis/ens2009_final.rds")
 
 #############################TERMINA ENS 2009############################
 ##EXCLUSIONES EN ENS 2017: MISMOS CRITERIOS QUE ENS 2009
@@ -84,4 +84,4 @@ dim(ENS2016conexc)
 table(ENS2016conexc$ca_activo)
 table(ENS2016conexc$muerte_cancer)
 
-write_rds(ENS2016conexc, "input/data-procesada/data-analisis/ens2016_analisis.rds")
+write_rds(ENS2016conexc, "input/data-procesada/data-analisis/ens2016_final.rds")

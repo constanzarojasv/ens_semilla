@@ -1,8 +1,8 @@
 #Cargar setup (librerías)
 source("procesamiento/00_setup.R", encoding = "UTF-8")
 
-class(ENS2003conexc_confekm$Depresion_1_AP)
-table(ENS2003conexc_confekm$Depresion_1_AP)
+class(ens2003_analisis$Depresion_1_AP)
+table(ENS2003conexc$Depresion_1_AP)
 
 # --- 1️⃣ Preparar variables ---
 ENS2003conexc_confekm <- ENS2003conexc_confekm %>%
