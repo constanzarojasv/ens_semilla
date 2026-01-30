@@ -85,3 +85,4 @@ table(ENS2016conexc$ca_activo)
 table(ENS2016conexc$muerte_cancer)
 
 write_rds(ENS2016conexc, "input/data-procesada/data-analisis/ens2016_final.rds")
+
