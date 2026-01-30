@@ -1224,6 +1224,46 @@ ENS_DEF2003 <- ENS_DEF2003 %>%
   )
 
 
+# 1. ENS 2003: Crear nueva variable y convertir a numérico
+ENS_DEF2003 <- ENS_DEF2003 %>%
+  mutate(FEXP_analisis = as.numeric(fexp))
+
+# 2. ENS 2009: Crear nueva variable y convertir a numérico
+ENS_DEF2009 <- ENS_DEF2009 %>%
+  mutate(FEXP_analisis = as.numeric(FEXP2))
+
+# 3. ENS 2017: Crear nueva variable y convertir a numérico
+ENS_DEF2017 <- ENS_DEF2017 %>%
+  mutate(FEXP_analisis = as.numeric(Fexp_F1F2p_Corr))
+
+
+
+# 1. ENS 2003: Renombrar (crear nueva) y convertir
+ENS_DEF2003 <- ENS_DEF2003 %>%
+  mutate(estrato = as.numeric(strata_))
+
+# 2. ENS 2009: Asegurar que sea numérico (ya tiene el nombre correcto)
+ENS_DEF2009 <- ENS_DEF2009 %>%
+  mutate(estrato = as.numeric(estrato))
+
+# 3. ENS 2017: Renombrar (crear nueva) y convertir
+ENS_DEF2017 <- ENS_DEF2017 %>%
+  mutate(estrato = as.numeric(Estrato))
+
+
+
+# 1. ENS 2003: Crear variable y convertir
+ENS_DEF2003 <- ENS_DEF2003 %>%
+  mutate(conglomerado = as.numeric(as.character(Conglomerado_)))
+
+# 2. ENS 2009: Crear variable y convertir
+ENS_DEF2009 <- ENS_DEF2009 %>%
+  mutate(conglomerado = as.numeric(as.character(conglomerado1)))
+
+# 3. ENS 2017: Crear variable y convertir
+ENS_DEF2017 <- ENS_DEF2017 %>%
+  mutate(conglomerado = as.numeric(as.character(Conglomerado)))
+
 #Guardar bases
 write_rds(ENS_DEF2003, "input/data-procesada/armonizadas/ens2003_def_armonizada.rds")
 write_rds(ENS_DEF2009, "input/data-procesada/armonizadas/ens2009_def_armonizada.rds")
