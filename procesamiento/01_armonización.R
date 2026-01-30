@@ -683,16 +683,7 @@ ENS_DEF2009 <- ENS_DEF2009 %>%
         FECHA_DEF) - fecha_encuesta))
 sum(ENS_DEF2009$dias_transcurridos < 0, na.rm = TRUE)
 
-###caso que fallece antes de la encuesta, se hace missing
-ENS_DEF2009 %>%
-  filter(dias_transcurridos < 0) %>%
-  select(ID, FECHA_DEF, fecha_encuesta, dias_transcurridos) 
-class(ENS_DEF2009$dias_transcurridos)
-
-#opcion para borrar la fila
-ENS_DEF2009 <- ENS_DEF2009 %>%
-  filter(ID != "3228")
-sum(ENS_DEF2009$dias_transcurridos < 0, na.rm = TRUE)
+#Hay un caso que fallece antes de la encuesta, se va a eliminar pero después del bind
 
 # Crear una nueva variable llamada muerte_cancer con restricciones ENS 2003. No hay muerte por diagnostico D0, D1 o D2 y excluir el D469 porque es sindrome mielodisplasico
 sum(ENS_DEF2003$DIAG1 == "D469", na.rm = TRUE)#aqui hay 2

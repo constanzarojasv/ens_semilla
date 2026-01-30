@@ -25,6 +25,16 @@ ENS_DEF2009$ca_activo  #CAMBIAR NOMBRE DE BASES 2009 Y 2017 SEGUN BIND
 ENS_DEF2017$ca_activo
 
 
+#HAY UN CASO EN ENS 2009 QUE FALLECE ANTES DE LA FECHA DE ENCUESTA, SE ELIMINA
+ENS_DEF2009 %>%
+  filter(dias_transcurridos < 0) %>%
+  select(ID, FECHA_DEF, fecha_encuesta, dias_transcurridos) 
+class(ENS_DEF2009$dias_transcurridos)
+
+#opcion para borrar la fila
+ENS_DEF2009 <- ENS_DEF2009 %>%
+  filter(ID != "3228")
+sum(ENS_DEF2009$dias_transcurridos < 0, na.rm = TRUE)
 
 #EXCLUSIONES ENS 2009: MENORES DE 25 Y CANCER ACTIVO (ca_activo == 1)
 # Número de personas <25 años 2009

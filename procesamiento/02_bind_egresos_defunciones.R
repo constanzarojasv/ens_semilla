@@ -123,9 +123,11 @@ class(ENS_DEF2009_ARMONIZADA$ID)
 
 
 # 04. ver si tengo los mismos ID en ambas bases de datos
-setequal(ENS_DEF2009_ARMONIZADA$ID, ens2009_egr$ID) #NO FUNCIONA
+setequal(ENS_DEF2009_ARMONIZADA$ID, ens2009_egr$ID) 
 
-class(ens2009_egr$FECHA_EGR) # NO SE LLAMA ASÍ
+class(ens2009_egr$FECHA_EGR) 
+
+#CONI: REVISÉ HASTA AQUÍ, FALTA REVISAR EL RESTO Y UNIR LAS BASES. LOS ID COINCIDEN
 
 # 05. primero quiero ver si hay id repetidos con diag1 de cancer
 
