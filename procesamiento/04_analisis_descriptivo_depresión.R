@@ -40,7 +40,7 @@ options(survey.lonely.psu="adjust")
 tabla1_2003 <- survey_designkm2003 %>% 
   tbl_svysummary(
     by = Depresion_1_AP, 
-    include = c(edad, sexo, NEDU, zona, fuma, estado_nutricional, a17, muerte_cancer, fallecidos),
+    include = c(edad, Edad_Codificada, sexo, NEDU, zona, fuma, estado_nutricional, a17, muerte_cancer, fallecidos),
     statistic = list(
       all_continuous() ~ "{mean} ({sd})",
       # CAMBIO CLAVE: agregamos {n_unweighted} para ver el n real

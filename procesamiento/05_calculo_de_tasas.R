@@ -1,6 +1,10 @@
 # 0.Cargar librerías
 source("procesamiento/00_setup.R", encoding = "UTF-8")
 
+ens2003_final$Edad_Codificada
+ens2009_final$Edad_Codificada
+ens2016_final$Edad_Codificada
+
 #funcion para  calcular tasas a 5 años
 analizar_tasa_5y <- function(datos, variable_grupo, pesos, conglomerado, estrato) {
   
