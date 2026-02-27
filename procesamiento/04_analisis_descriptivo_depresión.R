@@ -78,6 +78,21 @@ tabla1_depresion_2003 <- survey_designdepresion2003 %>%
 # 3. Mostrar el resultado
 tabla1_depresion_2003
 
+# Guardar el objeto intacto
+saveRDS(tabla1_depresion_2003, file = "output/tables/tabla1_depresion_2003.rds")
+
+# (Tus compañeros la podrán abrir en sus computadores usando:)
+# tabla_cargada <- readRDS("output/tables/tabla1_depresion_2003.rds")
+
+# Convertir a formato tabla de datos (tibble) y guardar
+tabla1_depresion_2003 %>%
+  as_tibble() %>%
+  export(file = "output/tables/tabla1_depresion_2003.xlsx") # Usando rio
+
+# O si prefieres un CSV:
+# tabla1_depresion_2003 %>%
+#   as_tibble() %>%
+#   write_csv(file = "output/tables/tabla1_depresion_2003.csv") # Usando readr
 
 
 #tabla 1 2003 para ICT
@@ -122,3 +137,6 @@ tabla1_ict_2003 <- survey_design_ICT_2003 %>%
 
 # 3. Mostrar el resultado
 tabla1_ict_2003
+
+
+
