@@ -1,13 +1,12 @@
-#Cargar setup (librerías)
+#1. Cargar setup (librerías)
 source("procesamiento/00_setup.R", encoding = "UTF-8")
 
+#2. Cargar bases para análisis
 ens2003_final <- read_rds("input/data-procesada/data-analisis/ens2003_final.rds")
 ens2009_final <- read_rds("input/data-procesada/data-analisis/ens2009_final.rds")
 ens2016_final <- read_rds("input/data-procesada/data-analisis/ens2016_final.rds")
 
-#primero etiquetar las variables y las categorias de las variables
-#etiquetar en ENS 2003
-
+#3. Etiquetar variables ENS 2003
 #sexo
 class(ens2003_final$sexo)
 table(ens2003_final$sexo)
@@ -18,7 +17,7 @@ ens2003_final <- ens2003_final %>%
 label(ens2003_final$sexo) <- "Sex"
 table(ens2003_final$sexo)
 
-#EDAD
+# variable edad
 class(ens2003_final$edad)
 label(ens2003_final$edad) <- "age"
 table(ens2003_final$edad)
@@ -68,7 +67,7 @@ ens2003_final <- ens2003_final %>%
 label(ens2003_final$estado_nutricional) <- "nutritional status"
 table(ens2003_final$estado_nutricional)
 
-#a17 actividad fisica
+#actividad fisica (a17)
 class(ens2003_final$a17)
 ens2003_final$a17<-as.factor(ens2003_final$a17)
 class(ens2003_final$a17)
@@ -117,7 +116,7 @@ label(ens2003_final$Depresion_1_AP) <- "Depression"
 table(ens2003_final$Depresion_1_AP)
 
 ######################################################################################################
-#etiquetar variables ENS 2009
+#4. Etiquetar variables ENS 2009
 #sexo
 class(ens2009_final$sexo)
 table(ens2009_final$sexo)
@@ -130,7 +129,7 @@ table(ens2009_final$sexo)
 
 #EDAD
 class(ens2009_final$edad)
-label(ens2009_final$edad) <- "age"
+label(ens2009_final$edad) <- "Age"
 table(ens2009_final$edad)
 
 #NEDU
@@ -177,7 +176,7 @@ ens2009_final <- ens2009_final %>%
 label(ens2009_final$estado_nutricional) <- "nutritional status"
 table(ens2009_final$estado_nutricional)
 
-#a17 actividad fisica
+#actividad fisica (a17)
 class(ens2009_final$a17)
 ens2009_final$a17<-as.factor(ens2009_final$a17)
 class(ens2009_final$a17)
@@ -188,6 +187,30 @@ ens2009_final <- ens2009_final %>%
                        labels = c("Yes, 3 or more times per week", "Yes, 1 to 2 times per week", "Less than 4 times per month", "No exercise in the past month")))
 label(ens2009_final$a17) <- "Physical activity"
 table(ens2009_final$a17)
+
+#actividad fisica (GPAQ)
+class(ens2009_final$GPAQ)
+ens2009_final$GPAQ <- as.factor(ens2009_final$GPAQ)
+table(ens2009_final$GPAQ)
+class(ens2009_final$GPAQ)
+ens2009_final <- ens2009_final %>%
+  mutate(GPAQ = factor(GPAQ, 
+                       levels = c("1", "2", "3"), 
+                       labels = c("Low", "Moderate", "High")))
+label(ens2009_final$GPAQ) <- "Physical activity level (GPAQ)"
+table(ens2009_final$GPAQ)
+
+#AUDIT
+class(ens2009_final$AUDIT_RIESGOSO)
+ens2009_final$AUDIT_RIESGOSO <- as.factor(ens2009_final$AUDIT_RIESGOSO)
+table(ens2009_final$AUDIT_RIESGOSO)
+class(ens2009_final$AUDIT_RIESGOSO)
+ens2009_final <- ens2009_final %>%
+  mutate(AUDIT_RIESGOSO = factor(AUDIT_RIESGOSO, 
+                       levels = c("0", "1"), 
+                       labels = c("No", "Yes")))
+label(ens2009_final$AUDIT_RIESGOSO) <- "Risky alcohol consumption"
+table(ens2009_final$AUDIT_RIESGOSO)
 
 #muerte cancer
 class(ens2009_final$muerte_cancer)
@@ -225,8 +248,21 @@ ens2009_final <- ens2009_final %>%
 label(ens2009_final$Depresion_1_AP) <- "Depression"
 table(ens2009_final$Depresion_1_AP)
 
+#Antecedente familiar
+class(ens2009_final$af_cancer_binaria)
+ens2009_final$af_cancer_binaria <-as.factor(ens2009_final$af_cancer_binaria)
+class(ens2009_final$af_cancer_binaria)
+table(ens2009_final$af_cancer_binaria)
+ens2009_final <- ens2009_final %>%
+  mutate(af_cancer_binaria = factor(af_cancer_binaria, 
+                                 levels = c("0", "1"), 
+                                 labels = c("No", "Yes")))
+label(ens2009_final$af_cancer_binaria) <- "FH of cancer"
+table(ens2009_final$af_cancer_binaria)
+
+
 ##################################################################################################
-#etiquetar variabales ens 2016
+#5. Etiquetar variabales ens 2016
 #sexo
 class(ens2016_final$sexo)
 table(ens2016_final$sexo)
@@ -237,7 +273,7 @@ ens2016_final <- ens2016_final %>%
 label(ens2016_final$sexo) <- "Sex"
 table(ens2016_final$sexo)
 
-#EDAD
+#variable edad
 class(ens2016_final$edad)
 label(ens2016_final$edad) <- "age"
 table(ens2016_final$edad)
@@ -283,10 +319,10 @@ ens2016_final <- ens2016_final %>%
   mutate(estado_nutricional = factor(estado_nutricional, 
                        levels = c("Enflaquecido", "Normal","Sobrepeso","Obesidad"), 
                        labels = c("Underweight", "Normal","Overweight","Obesity")))
-label(ens2016_final$estado_nutricional) <- "nutritional status"
+label(ens2016_final$estado_nutricional) <- "Nutritional status"
 table(ens2016_final$estado_nutricional)
 
-#a17 actividad fisica
+#actividad fisica (a17)
 class(ens2016_final$a17)
 ens2016_final$a17<-as.factor(ens2016_final$a17)
 class(ens2016_final$a17)
@@ -297,6 +333,30 @@ ens2016_final <- ens2016_final %>%
                        labels = c("Yes, 3 or more times per week", "Yes, 1 to 2 times per week", "Less than 4 times per month", "No exercise in the past month")))
 label(ens2016_final$a17) <- "Physical activity"
 table(ens2016_final$a17)
+
+#actividad fisica (GPAQ)
+class(ens2016_final$GPAQ)
+ens2016_final$GPAQ <- as.factor(ens2016_final$GPAQ)
+table(ens2016_final$GPAQ)
+class(ens2016_final$GPAQ)
+ens2016_final <- ens2016_final %>%
+  mutate(GPAQ = factor(GPAQ, 
+                       levels = c("1", "2", "3"), 
+                       labels = c("Low", "Moderate", "High")))
+label(ens2016_final$GPAQ) <- "Physical activity level (GPAQ)"
+table(ens2016_final$GPAQ)
+
+#AUDIT
+class(ens2016_final$AUDIT_RIESGOSO)
+ens2016_final$AUDIT_RIESGOSO <- as.factor(ens2016_final$AUDIT_RIESGOSO)
+table(ens2016_final$AUDIT_RIESGOSO)
+class(ens2016_final$AUDIT_RIESGOSO)
+ens2016_final <- ens2016_final %>%
+  mutate(AUDIT_RIESGOSO = factor(AUDIT_RIESGOSO, 
+                       levels = c("0", "1"), 
+                       labels = c("No", "Yes")))
+label(ens2016_final$AUDIT_RIESGOSO) <- "Risky alcohol consumption"
+table(ens2016_final$AUDIT_RIESGOSO)
 
 #muerte cancer
 class(ens2016_final$muerte_cancer)
@@ -334,129 +394,17 @@ ens2016_final <- ens2016_final %>%
 label(ens2016_final$Depresion_1_AP) <- "Depression"
 table(ens2016_final$Depresion_1_AP)
 
-#falta etiquetar antecedentes fmailiares de cancer e ICT
-
-# --- 1️⃣ Preparar variables ---
-ens2003_final <- ens2003_final %>%
-  mutate(
-    tiempo_total = dias_transcurridos / 365.25,       # convertir días a años
-    evento_total = muerte_cancer,                     # evento sin censura
-    evento_label = factor(evento_total,
-                          levels = c(0,1),
-                          labels = c("No muertos por cáncer", "Muertes por cáncer"))
-  )
-
-# --- 2️⃣ Diseño de encuesta ---
-# 1. Definir el diseño original con todos los datos
-survey_design2003 <- svydesign(
-  id = ~conglomerado,
-  strata = ~estrato,
-  weights = ~FEXP_analisis,
-  data = ens2003_final,
-  nest = TRUE
-)
-
-# 2. Crear un subconjunto para la variable específica (esto mantiene la integridad del diseño)
-survey_designdepresion2003 <- subset(survey_design2003, !is.na(Depresion_1_AP))
-options(survey.lonely.psu="adjust")
-
-#2. realizar tabla
-tabla1_depresion_2003 <- survey_designdepresion2003 %>% 
-  tbl_svysummary(
-    by = Depresion_1_AP, 
-    include = c(edad, Edad_Codificada, sexo, NEDU, zona, fuma, estado_nutricional, a17, muerte_cancer, fallecidos),
-    statistic = list(
-      all_continuous() ~ "{mean} ({sd})",
-      # CAMBIO CLAVE: agregamos {n_unweighted} para ver el n real
-      all_categorical() ~ "{n_unweighted} ({p}%)" 
-    ),
-    digits = list(all_continuous() ~ 1, all_categorical() ~ c(0, 1)), # 0 decimales para n, 1 para %
-    missing = "no",
-    label = list(
-      edad ~ "Edad (años)",
-      sexo ~ "Sexo",
-      NEDU ~ "Nivel educacional",
-      zona ~ "Zona",
-      fuma ~ "Hábito tabáquico",
-      estado_nutricional ~ "Estado nutricional",
-      a17 ~ "Realiza actividad física",
-      muerte_cancer ~ "Mortalidad por cáncer",
-      fallecidos ~ "Estado vital"
-    )
-  ) %>%
-  # El argumento unweighted = TRUE asegura que la columna 'N' sea el conteo real
-  add_n(unweighted = TRUE) %>% 
-  add_p(test = list(all_continuous() ~ "svy.t.test", all_categorical() ~ "svy.wald.test")) %>%
-  add_overall(last = FALSE, col_label = "**General (N={N_unweighted})**") %>%
-  modify_header(
-    label = "**Variable**",
-    stat_1 = "**Sin síntomas (N={n_unweighted})**",
-    stat_2 = "**Con síntomas (N={n_unweighted})**"
-  ) %>%
-  bold_labels()
-
-# 3. Mostrar el resultado
-tabla1_depresion_2003
-
-# Guardar el objeto intacto
-saveRDS(tabla1_depresion_2003, file = "output/tables/tabla1_depresion_2003.rds")
-
-# (Tus compañeros la podrán abrir en sus computadores usando:)
-# tabla_cargada <- readRDS("output/tables/tabla1_depresion_2003.rds")
-
-# Convertir a formato tabla de datos (tibble) y guardar
-tabla1_depresion_2003 %>%
-  as_tibble() %>%
-  export(file = "output/tables/tabla1_depresion_2003.xlsx") # Usando rio
-
-# O si prefieres un CSV:
-# tabla1_depresion_2003 %>%
-#   as_tibble() %>%
-#   write_csv(file = "output/tables/tabla1_depresion_2003.csv") # Usando readr
+#Antecedente familiar
+class(ens2016_final$af_cancer_binaria)
+ens2016_final$af_cancer_binaria <-as.factor(ens2016_final$af_cancer_binaria)
+class(ens2016_final$af_cancer_binaria)
+table(ens2016_final$af_cancer_binaria)
+ens2016_final <- ens2016_final %>%
+  mutate(af_cancer_binaria = factor(af_cancer_binaria, 
+                                 levels = c("0", "1"), 
+                                 labels = c("No", "Yes")))
+label(ens2016_final$af_cancer_binaria) <- "FH of cancer"
+table(ens2016_final$af_cancer_binaria)
 
 
-#tabla 1 2003 para ICT
-# 2. Crear un subconjunto para la variable específica (esto mantiene la integridad del diseño)
-survey_design_ICT_2003 <- subset(survey_design2003, !is.na(ict))
-options(survey.lonely.psu="adjust")
-
-#2. realizar tabla
-tabla1_ict_2003 <- survey_design_ICT_2003 %>% 
-  tbl_svysummary(
-    by = ict, 
-    include = c(edad, Edad_Codificada, sexo, NEDU, zona, fuma, estado_nutricional, a17, muerte_cancer, fallecidos),
-    statistic = list(
-      all_continuous() ~ "{mean} ({sd})",
-      # CAMBIO CLAVE: agregamos {n_unweighted} para ver el n real
-      all_categorical() ~ "{n_unweighted} ({p}%)" 
-    ),
-    digits = list(all_continuous() ~ 1, all_categorical() ~ c(0, 1)), # 0 decimales para n, 1 para %
-    missing = "no",
-    label = list(
-      edad ~ "Edad (años)",
-      sexo ~ "Sexo",
-      NEDU ~ "Nivel educacional",
-      zona ~ "Zona",
-      fuma ~ "Hábito tabáquico",
-      estado_nutricional ~ "Estado nutricional",
-      a17 ~ "Realiza actividad física",
-      muerte_cancer ~ "Mortalidad por cáncer",
-      fallecidos ~ "Estado vital"
-    )
-  ) %>%
-  # El argumento unweighted = TRUE asegura que la columna 'N' sea el conteo real
-  add_n(unweighted = TRUE) %>% 
-  add_p(test = list(all_continuous() ~ "svy.t.test", all_categorical() ~ "svy.wald.test")) %>%
-  add_overall(last = FALSE, col_label = "**General (N={N_unweighted})**") %>%
-  modify_header(
-    label = "**Variable**",
-    stat_1 = "**Sin síntomas (N={n_unweighted})**",
-    stat_2 = "**Con síntomas (N={n_unweighted})**"
-  ) %>%
-  bold_labels()
-
-# 3. Mostrar el resultado
-tabla1_ict_2003
-
-
-
+#falta etiquetar ICT @Caolos
