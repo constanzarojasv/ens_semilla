@@ -128,8 +128,19 @@ table(ens2009_final$sexo)
 
 #EDAD
 class(ens2009_final$edad)
-label(ens2009_final$edad) <- "Age"
+label(ens2009_final$edad) <- "Age (years)"
 table(ens2009_final$edad)
+
+#edad categorica
+class(ens2009_final$Edad_Codificada)
+ens2009_final$Edad_Codificada<-as.factor(ens2009_final$Edad_Codificada)
+table(ens2009_final$Edad_Codificada)
+ens2009_final <- ens2009_final %>%
+  mutate(Edad_Codificada = factor(Edad_Codificada, 
+                       levels = c("2", "3", "4"), 
+                       labels = c("25-44 years", "45-64 years", "≥65 years")))
+label(ens2009_final$Edad_Codificada) <- "Age group"
+table(ens2009_final$Edad_Codificada)
 
 #NEDU
 class(ens2009_final$NEDU)
@@ -172,7 +183,7 @@ ens2009_final <- ens2009_final %>%
   mutate(estado_nutricional = factor(estado_nutricional, 
                        levels = c("Enflaquecido", "Normal","Sobrepeso","Obesidad"), 
                        labels = c("Underweight", "Normal","Overweight","Obesity")))
-label(ens2009_final$estado_nutricional) <- "nutritional status"
+label(ens2009_final$estado_nutricional) <- "Nutritional status"
 table(ens2009_final$estado_nutricional)
 
 #actividad fisica (a17)
