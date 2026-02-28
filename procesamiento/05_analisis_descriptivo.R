@@ -1,12 +1,4 @@
-#Cargar setup (librerías)
-source("procesamiento/00_setup.R", encoding = "UTF-8")
-
-#Cargar bases para análisis
-ens2003_final <- read_rds("input/data-procesada/data-analisis/ens2003_final.rds")
-ens2009_final <- read_rds("input/data-procesada/data-analisis/ens2009_final.rds")
-ens2016_final <- read_rds("input/data-procesada/data-analisis/ens2016_final.rds")
-
-#Cargar etiquetado de variables
+#Cargar setupd con librerías, bases y etiquetado de variables
 source("procesamiento/04_etiquetado_variables.R", encoding = "UTF-8")
 
 # --- 1️⃣ Preparar variables ---
