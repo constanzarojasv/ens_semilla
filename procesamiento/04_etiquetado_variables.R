@@ -25,7 +25,6 @@ table(ens2003_final$edad)
 #NEDU
 class(ens2003_final$NEDU)
 table(ens2003_final$NEDU)
-ENS_DEF2003$NEDU
 ens2003_final <- ens2003_final %>%
   mutate(NEDU = factor(NEDU, 
                        levels = c("1", "2", "3"), 
@@ -370,17 +369,18 @@ ens2016_final <- ens2016_final %>%
 label(ens2016_final$muerte_cancer) <- "Cancer mortality"
 table(ens2016_final$muerte_cancer)
 
-#Fallecimiento
-class(ens2016_final$fallecidos)
-ens2016_final$fallecidos<-as.factor(ens2016_final$fallecidos)
-class(ens2016_final$fallecidos)
-table(ens2016_final$fallecidos)
-ens2016_final <- ens2016_final %>%
-  mutate(fallecidos = factor(fallecidos, 
-                       levels = c("1", "2","3"), 
-                       labels = c("Cancer death", "Other causes of death", "Alive")))
-label(ens2016_final$fallecidos) <- "Vital status"
-table(ens2016_final$fallecidos)
+#Fallecimiento 
+# @JosefaPC me sale error en esta variable! La dejé fuera por mientras (coni)
+#class(ens2016_final$fallecidos)
+#ens2016_final$fallecidos<-as.factor(ens2016_final$fallecidos)
+#class(ens2016_final$fallecidos)
+#table(ens2016_final$fallecidos)
+#ens2016_final <- ens2016_final %>%
+#  mutate(fallecidos = factor(fallecidos, 
+#                       levels = c("1", "2","3"), 
+#                       labels = c("Cancer death", "Other causes of death", "Alive")))
+#label(ens2016_final$fallecidos) <- "Vital status"
+#table(ens2016_final$fallecidos)
 
 #Depresión
 class(ens2016_final$Depresion_1_AP)
