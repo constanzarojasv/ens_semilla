@@ -285,8 +285,20 @@ table(ens2016_final$sexo)
 
 #variable edad
 class(ens2016_final$edad)
-label(ens2016_final$edad) <- "age"
+label(ens2016_final$edad) <- "Age (years)"
 table(ens2016_final$edad)
+
+#variable edad categorica
+class(ens2016_final$Edad_Codificada)
+ens2016_final$Edad_Codificada<-as.factor(ens2016_final$Edad_Codificada)
+table(ens2016_final$Edad_Codificada)
+ens2016_final <- ens2016_final %>%
+  mutate(Edad_Codificada = factor(Edad_Codificada, 
+                       levels = c("2", "3", "4"), 
+                       labels = c("25-44 years", "45-64 years", "≥65 years")))
+label(ens2016_final$Edad_Codificada) <- "Age group"
+table(ens2016_final$Edad_Codificada)
+
 
 #NEDU
 class(ens2016_final$NEDU)
