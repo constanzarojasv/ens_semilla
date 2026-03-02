@@ -4,7 +4,9 @@ source("procesamiento/00_setup.R", encoding = "UTF-8")
 ens2003_final$Edad_Codificada
 ens2009_final$Edad_Codificada
 ens2016_final$Edad_Codificada
-
+ens2003_final$ictaumentado <- as.numeric(ens2003_final$ict >= 0.6)
+ens2009_final$ictaumentado <- as.numeric(ens2009_final$ict >= 0.6)
+ens2016_final$ictaumentado <- as.numeric(ens2016_final$ict >= 0.6)
 #funcion para  calcular tasas a 5 años
 analizar_tasa_5y <- function(datos, variable_grupo, pesos, conglomerado, estrato) {
   
