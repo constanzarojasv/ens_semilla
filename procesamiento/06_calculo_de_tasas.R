@@ -132,9 +132,10 @@ analizar_tasa_cancer_5y <- function(datos, variable_grupo, pesos, conglomerado, 
   ))
 }
 
-# --- Ejecución del análisis ---
-# El objeto ahora se llama analisis_cancer_5y_depresion
-analisis_cancer_5y_depresion <- analizar_tasa_cancer_5y(
+# -------------------- Ejecución del análisis ---
+
+# Ejemplo para ENS 2003
+analisis_depresion_5y_2003 <- analizar_tasa_5y(
   datos = ens2003_final,
   variable_grupo = "Depresion_1_AP",
   pesos = "FEXP_analisis",
@@ -142,5 +143,53 @@ analisis_cancer_5y_depresion <- analizar_tasa_cancer_5y(
   estrato = "estrato"
 )
 
-# Para ver los resultados:
-print(analisis_cancer_5y_depresion$resultados_tabla)
+# Para ver la tabla:
+print(analisis_depresion_5y_2003$resultados_tabla)
+
+# Para ver el p-valor:
+print(analisis_depresion_5y_2003$test_estadistico)
+
+# El objeto ahora se llama analisis_cancer_5y_depresion
+analisis_cancer_5y_depresion_2003 <- analizar_tasa_cancer_5y(
+  datos = ens2003_final,
+  variable_grupo = "Depresion_1_AP",
+  pesos = "FEXP_analisis",
+  conglomerado = "conglomerado",
+  estrato = "estrato"
+)
+
+# Para ver la tabla:
+print(analisis_cancer_5y_depresion_2003$resultados_tabla)
+
+# Para ver el p-valor:
+print(analisis_cancer_5y_depresion_2003$test_estadistico)
+
+# Ejemplo para ENS 2009
+analisis_depresion_5y_2009 <- analizar_tasa_5y(
+  datos = ens2009_final,
+  variable_grupo = "Depresion_1_AP",
+  pesos = "FEXP1",
+  conglomerado = "conglomerado",
+  estrato = "estrato"
+)
+
+# Para ver la tabla:
+print(analisis_depresion_5y_2009$resultados_tabla)
+
+# Para ver el p-valor:
+print(analisis_depresion_5y_2009$test_estadistico)
+
+# El objeto ahora se llama analisis_cancer_5y_depresion
+analisis_cancer_5y_depresion_2009 <- analizar_tasa_cancer_5y(
+  datos = ens2009_final,
+  variable_grupo = "Depresion_1_AP",
+  pesos = "FEXP1",
+  conglomerado = "conglomerado",
+  estrato = "estrato"
+)
+
+# Para ver la tabla:
+print(analisis_cancer_5y_depresion_2009$resultados_tabla)
+
+# Para ver el p-valor:
+print(analisis_cancer_5y_depresion_2009$test_estadistico)
