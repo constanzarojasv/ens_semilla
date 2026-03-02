@@ -1,14 +1,15 @@
 source("procesamiento/04_etiquetado_variables.R", encoding = "UTF-8")
 
 ####### KM expandido  #####
-# Filtrar datos sin NA en AF
-ens2009_final <- ens2009_final %>%
-  filter(!is.na(af_cancer_binaria))
+#########ENS 2003############################################################################
+# Filtrar datos sin NA en sintomas depresivos
+ens2003_final <- ens2003_final %>%
+  filter(!is.na(Depresion_1_AP))
 
-ens2009_final$af_cancer_binaria <- as.factor(ens2009_final$af_cancer_binaria)
+ens2003_final$Depresion_1_AP <- as.factor(ens2003_final$Depresion_1_AP)
 
 # Preparar variables
-ens2009_final <- ens2009_final %>%
+ens2003_final <- ens2003_final %>%
   mutate(
     tiempo_total = dias_transcurridos / 365.25,
     evento_total = if_else(muerte_cancer == "Cancer death", 1, 0),
@@ -21,15 +22,15 @@ ens2009_final <- ens2009_final %>%
 survey_designkm <- svydesign(
   id = ~conglomerado,
   strata = ~estrato,
-  weights = ~FEXP1,
-  data = ens2009_final,
+  weights = ~FEXP_analisis,
+  data = ens2003_final,
   nest = TRUE
 )
 options(survey.lonely.psu = "certainty")
 
 # Kaplan-Meier ponderado con svykm()
 # 1. Recalcular el modelo pidiendo explícitamente los errores estándar (se = TRUE)
-km_fit <- svykm(Surv(tiempo_total, evento_total) ~ af_cancer_binaria, 
+km_fit <- svykm(Surv(tiempo_total, evento_total) ~ Depresion_1_AP, 
                 design = survey_designkm, 
                 se = TRUE)
 
@@ -63,7 +64,7 @@ df_km <- bind_rows(
 )
 
 # Limpiar los nombres de los grupos para la leyenda
-df_km$grupo <- gsub("af_cancer_binaria=", "", df_km$grupo)
+df_km$grupo <- gsub("Depresion_1_AP=", "", df_km$grupo)
 
 # 3. Generar el gráfico aesthetic con intervalos de confianza
 ggplot(df_km, aes(x = tiempo, y = supervivencia, color = grupo, fill = grupo)) +
@@ -86,12 +87,12 @@ ggplot(df_km, aes(x = tiempo, y = supervivencia, color = grupo, fill = grupo)) +
   scale_fill_manual(values = c("#2980b9", "#c0392b")) + 
   
   labs(
-    title = "Curva de Kaplan-Meier (Muerte por Cáncer)",
-    subtitle = "ENS 2009 - Con Intervalos de Confianza al 95%",
+    title = "Curva de Kaplan-Meier para personas según presencia de síntomas depresivos (Muerte por Cáncer)",
+    subtitle = "ENS 2003 - Con Intervalos de Confianza al 95%",
     x = "Años de seguimiento",
     y = "Probabilidad de Supervivencia",
-    color = "AF Cáncer",
-    fill = "AF Cáncer" # Asegura que la leyenda combine línea y sombreado
+    color = "Síntomas depresivos",
+    fill = "Síntomas depresivos" # Asegura que la leyenda combine línea y sombreado
   ) +
   
   # Tema minimalista
@@ -110,12 +111,12 @@ ggplot(df_km, aes(x = tiempo, y = supervivencia, color = grupo, fill = grupo)) +
   )
 
 # Test log-rank ponderado
-logrank_test <- svyranktest(Surv(tiempo_total, evento_total) ~ af_cancer_binaria, design = survey_designkm)
+logrank_test <- svyranktest(Surv(tiempo_total, evento_total) ~ Depresion_1_AP, design = survey_designkm)
 cat("Valor p log-rank (diseño complejo):", logrank_test$p.value, "\n")
 
 # Ver resumen del tiempo y eventos por grupo
-ens2009_final %>%
-  group_by(af_cancer_binaria) %>%
+ens2003_final %>%
+  group_by(Depresion_1_AP) %>%
   summarise(
     n = n(),
     n_eventos = sum(evento_total == 1, na.rm = TRUE),
@@ -123,24 +124,23 @@ ens2009_final %>%
     max_tiempo = max(tiempo_total, na.rm = TRUE)
   )
 
-# Sobrevida a los 5 años (Grupo Con AF)
+# Sobrevida a los 5 años (Grupo Con sintomas depresivos)
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 
-# Sobrevida a los 10 años (Grupo Con AF)
+# Sobrevida a los 10 años (Grupo Con sintomas depresivos)
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
-#Guardar gráfico
-# ggsave("output/graphs/KM_AF_2009.png", width = 10, height = 6, dpi = 300)
+ggsave("output/graphs/KM_depresion_2003.png", width = 12, height = 8, dpi = 300)
 
-####### KM expandido 2016 #####
-# Filtrar datos sin NA en AF
-ens2016_final <- ens2016_final %>%
-  filter(!is.na(af_cancer_binaria))
+#########ENS 2009############################################################################
+# Filtrar datos sin NA en sintomas de presivos
+ens2009_final <- ens2009_final %>%
+  filter(!is.na(Depresion_1_AP))
 
-ens2016_final$af_cancer_binaria <- as.factor(ens2016_final$af_cancer_binaria)
+ens2009_final$Depresion_1_AP <- as.factor(ens2009_final$Depresion_1_AP)
 
 # Preparar variables
-ens2016_final <- ens2016_final %>%
+ens2009_final <- ens2009_final %>%
   mutate(
     tiempo_total = dias_transcurridos / 365.25,
     evento_total = if_else(muerte_cancer == "Cancer death", 1, 0),
@@ -150,25 +150,25 @@ ens2016_final <- ens2016_final %>%
   )
 
 # Diseño muestral
-survey_designkm_2016 <- svydesign(
+survey_designkm <- svydesign(
   id = ~conglomerado,
   strata = ~estrato,
-  weights = ~Fexp_F1p_Corr,
-  data = ens2016_final,
+  weights = ~FEXP1,
+  data = ens2009_final,
   nest = TRUE
 )
 options(survey.lonely.psu = "certainty")
 
 # Kaplan-Meier ponderado con svykm()
 # 1. Recalcular el modelo pidiendo explícitamente los errores estándar (se = TRUE)
-km_fit_2016 <- svykm(Surv(tiempo_total, evento_total) ~ af_cancer_binaria, 
-                design = survey_designkm_2016, 
+km_fit <- svykm(Surv(tiempo_total, evento_total) ~ Depresion_1_AP, 
+                design = survey_designkm, 
                 se = TRUE)
 
 # 2. Extraer los datos y los intervalos de confianza a un data frame
-df_km_2016 <- bind_rows(
-  lapply(names(km_fit_2016), function(nom) {
-    km_obj <- km_fit_2016[[nom]]
+df_km <- bind_rows(
+  lapply(names(km_fit), function(nom) {
+    km_obj <- km_fit[[nom]]
     
     # SOLUCIÓN: Indicar explícitamente los tiempos en el argumento 'parm'
     ci <- confint(km_obj, parm = km_obj$time)
@@ -195,10 +195,10 @@ df_km_2016 <- bind_rows(
 )
 
 # Limpiar los nombres de los grupos para la leyenda
-df_km_2016$grupo <- gsub("af_cancer_binaria=", "", df_km_2016$grupo)
+df_km$grupo <- gsub("Depresion_1_AP=", "", df_km$grupo)
 
 # 3. Generar el gráfico aesthetic con intervalos de confianza
-ggplot(df_km_2016, aes(x = tiempo, y = supervivencia, color = grupo, fill = grupo)) +
+ggplot(df_km, aes(x = tiempo, y = supervivencia, color = grupo, fill = grupo)) +
   
   # Banda de intervalo de confianza (sombreado translúcido)
   geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.15, color = NA) +
@@ -211,19 +211,19 @@ ggplot(df_km_2016, aes(x = tiempo, y = supervivencia, color = grupo, fill = grup
                      breaks = seq(0.9, 1.0, by = 0.02),
                      labels = scales::percent_format(accuracy = 1)) + 
   
-  scale_x_continuous(breaks = seq(0, max(df_km_2016$tiempo, na.rm = TRUE), by = 2)) +
+  scale_x_continuous(breaks = seq(0, max(df_km$tiempo, na.rm = TRUE), by = 2)) +
   
   # Colores para líneas (color) y bandas (fill)
   scale_color_manual(values = c("#2980b9", "#c0392b")) + 
   scale_fill_manual(values = c("#2980b9", "#c0392b")) + 
   
   labs(
-    title = "Curva de Kaplan-Meier (Muerte por Cáncer)",
-    subtitle = "ENS 2016 - Con Intervalos de Confianza al 95%",
+    title = "Curva de Kaplan-Meier para personas segun presencia de sintomas depresivos (Muerte por Cáncer)",
+    subtitle = "ENS 2009 - Con Intervalos de Confianza al 95%",
     x = "Años de seguimiento",
     y = "Probabilidad de Supervivencia",
-    color = "AF Cáncer",
-    fill = "AF Cáncer" # Asegura que la leyenda combine línea y sombreado
+    color = "Síntomas depresivos",
+    fill = "Síntomas depresivos" # Asegura que la leyenda combine línea y sombreado
   ) +
   
   # Tema minimalista
@@ -242,12 +242,12 @@ ggplot(df_km_2016, aes(x = tiempo, y = supervivencia, color = grupo, fill = grup
   )
 
 # Test log-rank ponderado
-logrank_test_2016 <- svyranktest(Surv(tiempo_total, evento_total) ~ af_cancer_binaria, design = survey_designkm_2016)
-cat("Valor p log-rank (diseño complejo):", logrank_test_2016$p.value, "\n")
+logrank_test <- svyranktest(Surv(tiempo_total, evento_total) ~ Depresion_1_AP, design = survey_designkm)
+cat("Valor p log-rank (diseño complejo):", logrank_test$p.value, "\n")
 
 # Ver resumen del tiempo y eventos por grupo
-ens2016_final %>%
-  group_by(af_cancer_binaria) %>%
+ens2009_final %>%
+  group_by(Depresion_1_AP) %>%
   summarise(
     n = n(),
     n_eventos = sum(evento_total == 1, na.rm = TRUE),
@@ -255,16 +255,17 @@ ens2016_final %>%
     max_tiempo = max(tiempo_total, na.rm = TRUE)
   )
 
-# Sobrevida a los 5 años (Grupo Con AF)
-km_fit_2016[[2]]$surv[max(which(km_fit_2016[[2]]$time <= 5))]
+# Sobrevida a los 5 años (Grupo Con sintomas depresivos)
+km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 
-# Sobrevida a los 10 años (Grupo Con AF)
-km_fit_2016[[2]]$surv[max(which(km_fit_2016[[2]]$time <= 10))]
+# Sobrevida a los 10 años (Grupo Con sintomas depresivos)
+km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
-#Guardar gráfico
-#ggsave("output/graphs/KM_AF_2016.png", width = 10, height = 6, dpi = 300)
+ggsave("output/graphs/KM_depresion_2009.png", width = 12, height = 8, dpi = 300)
 
+#################################################################################################
 ####COX con muestra expandida####
+#################################################################################################
 # Actualizar el diseño de encuesta para incluir las variables necesarias
 
 ENS2009conexc_confe <- ENS2009conexc_confe %>%
@@ -429,5 +430,3 @@ print(p_forest_2009)
 
 # Guardar (opcional)
 # ggsave("forest_af_y_sexo_ENS2009.png", p_forest_2009, width = 8, height = 5, dpi = 300)
-
-
