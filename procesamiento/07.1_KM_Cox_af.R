@@ -113,7 +113,6 @@ ggplot(df_km, aes(x = tiempo, y = supervivencia, color = grupo, fill = grupo)) +
 logrank_test <- svyranktest(Surv(tiempo_total, evento_total) ~ af_cancer_binaria, design = survey_designkm)
 cat("Valor p log-rank (diseño complejo):", logrank_test$p.value, "\n")
 
-
 # Ver resumen del tiempo y eventos por grupo
 ens2009_final %>%
   group_by(af_cancer_binaria) %>%
@@ -131,9 +130,6 @@ km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
 ####COX con muestra expandida####
-
-# Librerías
-
 # Actualizar el diseño de encuesta para incluir las variables necesarias
 
 ENS2009conexc_confe <- ENS2009conexc_confe %>%
