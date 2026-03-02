@@ -1,5 +1,5 @@
 # 0.Cargar librerías
-source("procesamiento/00_setup.R", encoding = "UTF-8")
+source("procesamiento/04_etiquetado_variables.R", encoding = "UTF-8")
 
 ens2003_final$Edad_Codificada
 ens2009_final$Edad_Codificada
