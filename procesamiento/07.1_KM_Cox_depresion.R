@@ -22,8 +22,8 @@ ens2003_final <- ens2003_final %>%
 survey_designkm <- svydesign(
   id = ~conglomerado,
   strata = ~estrato,
-  weights = ~FEXP1,
-  data = ens2009_final,
+  weights = ~FEXP_analisis,
+  data = ens2003_final,
   nest = TRUE
 )
 options(survey.lonely.psu = "certainty")
@@ -130,6 +130,7 @@ km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 # Sobrevida a los 10 años (Grupo Con sintomas depresivos)
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
+ggsave("output/graphs/KM_depresion_2003.png", width = 12, height = 8, dpi = 300)
 
 #########ENS 2009############################################################################
 # Filtrar datos sin NA en sintomas de presivos
@@ -259,6 +260,8 @@ km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 
 # Sobrevida a los 10 años (Grupo Con sintomas depresivos)
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
+
+ggsave("output/graphs/KM_depresion_2009.png", width = 12, height = 8, dpi = 300)
 
 #################################################################################################
 ####COX con muestra expandida####
