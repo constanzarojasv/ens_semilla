@@ -19,8 +19,19 @@ table(ens2003_final$sexo)
 
 # variable edad
 class(ens2003_final$edad)
-label(ens2003_final$edad) <- "age"
+label(ens2003_final$edad) <- "Age (years)"
 table(ens2003_final$edad)
+
+#edad categorica
+class(ens2003_final$Edad_Codificada)
+ens2003_final$Edad_Codificada<-as.factor(ens2003_final$Edad_Codificada)
+table(ens2003_final$Edad_Codificada)
+ens2003_final <- ens2003_final %>%
+  mutate(Edad_Codificada = factor(Edad_Codificada, 
+                       levels = c("2", "3", "4"), 
+                       labels = c("25-44 years", "45-64 years", "≥65 years")))
+label(ens2003_final$Edad_Codificada) <- "Age group"
+table(ens2003_final$Edad_Codificada)
 
 #NEDU
 class(ens2003_final$NEDU)
