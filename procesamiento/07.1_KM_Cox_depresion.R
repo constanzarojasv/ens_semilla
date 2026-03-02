@@ -266,74 +266,64 @@ ggsave("output/graphs/KM_depresion_2009.png", width = 12, height = 8, dpi = 300)
 #################################################################################################
 ####COX con muestra expandida####
 #################################################################################################
+
 # Actualizar el diseño de encuesta para incluir las variables necesarias
 
-ENS2009conexc_confe <- ENS2009conexc_confe %>%
-  mutate(
-    sexo = factor(sexo,
-                  levels = c(1, 2),
-                  labels = c("Hombre", "Mujer"))
-  )
-survey_designkm <- update(survey_designkm,
-                        tiempo_anos = ENS2009conexc_confe$dias_transcurridos / 365.25,
-                        af_cancer_binaria = ENS2009conexc_confe$af_cancer_binaria,
-                        muerte_cancer = ENS2009conexc_confe$muerte_cancer,
-                        edad = ENS2009conexc_confe$edad,
-                        sexo = ENS2009conexc_confe$sexo,
-                        nedu = ENS2009conexc_confe$nedu,
-                        zona = ENS2009conexc_confe$zona,
-                        AUDIT = ENS2009conexc_confe$AUDIT_RIESGOSO,
-                        fuma = ENS2009conexc_confe$fuma,
-                        imc = ENS2009conexc_confe$imc,
-                        GPAQ = ENS2009conexc_confe$GPAQ
-                        )
+survey_designkm2009 <- update(survey_designkm,
+  tiempo_anos = ens2009_final$dias_transcurridos / 365.25,
+  Depresion_1_AP = ens2009_final$Depresion_1_AP,
+  edad = ens2009_final$edad,
+  sexo = ens2009_final$sexo,
+  nedu = ens2009_final$NEDU,
+  zona = ens2009_final$zona,
+    fuma = ens2009_final$fuma,
+    imc = ens2009_final$imc)
 
-
-
-# 1️⃣ Preparar variable de tiempo
-ENS2009conexc_confe <- ENS2009conexc_confe %>%
-  mutate(
-    tiempo_anos = dias_transcurridos / 365.25
-  )
-
-# 2️⃣ Modelos de Cox con diseño de encuesta
-cox_crudo <- svycoxph(Surv(tiempo_anos, muerte_cancer) ~ af_cancer_binaria,
+# Modelos de Cox con diseño de encuesta
+cox_crudo <- svycoxph(Surv(tiempo_total, evento_total) ~ af_cancer_binaria,
                       design = survey_designkm)
 
-cox_edad <- svycoxph(Surv(tiempo_anos, muerte_cancer) ~ af_cancer_binaria + edad,
+cox_edad <- svycoxph(Surv(tiempo_total, evento_total) ~ af_cancer_binaria + edad,
                      design = survey_designkm)
 
-cox_edad_sexo <- svycoxph(Surv(tiempo_anos, muerte_cancer) ~ af_cancer_binaria + edad + sexo,
+cox_edad_sexo <- svycoxph(Surv(tiempo_total, evento_total) ~ af_cancer_binaria + edad + sexo,
                           design = survey_designkm)
 
-cox_edad_sexo_nedu <- svycoxph(Surv(tiempo_anos, muerte_cancer) ~ af_cancer_binaria + edad + sexo + nedu,
+cox_edad_sexo_nedu <- svycoxph(Surv(tiempo_total, evento_total) ~ af_cancer_binaria + edad + sexo + nedu,
                                design = survey_designkm)
 
-cox_contodo<- svycoxph(Surv(tiempo_anos, muerte_cancer) ~ af_cancer_binaria + edad + sexo + nedu + zona + AUDIT + fuma + imc + GPAQ,
+cox_completo<- svycoxph(Surv(tiempo_total, evento_total) ~ af_cancer_binaria + edad + sexo + nedu + zona + AUDIT + fuma + imc + GPAQ,
                        design = survey_designkm)
 
-# 3️⃣ Tabla resumen de HR, IC y p-value
+# Tabla resumen de HR, IC y p-value
 resumen <- bind_rows(
-  tidy(cox_crudo) %>% mutate(modelo = "Crudo"),
-  tidy(cox_edad) %>% mutate(modelo = "Edad"),
-  tidy(cox_edad_sexo) %>% mutate(modelo = "Edad+Sexo"),
-  tidy(cox_contodo) %>% mutate(modelo = "Con todo")
+  broom::tidy(cox_crudo, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Crudo"),
+  broom::tidy(cox_edad, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad"),
+  broom::tidy(cox_edad_sexo, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad+Sexo"),
+  broom::tidy(cox_completo, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Modelo completo")
 ) %>%
-  mutate(
-    HR = exp(estimate),
-    IC_inf = exp(estimate - 1.96*std.error),
-    IC_sup = exp(estimate + 1.96*std.error)
-  ) %>%
-  select(modelo, term, HR, IC_inf, IC_sup, p.value)
+  # Como tidy() ya calculó el HR y los IC, solo seleccionamos y renombramos las columnas
+  select(
+    modelo, 
+    term, 
+    HR = estimate,        # estimate ya viene exponenciado (es el HR)
+    IC_inf = conf.low,    # conf.low es el límite inferior
+    IC_sup = conf.high,   # conf.high es el límite superior
+    p.value
+  )
 
 # Mostrar tabla
 kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer")
 
+# Generamos la tabla con kable y la guardamos en un objeto
+tabla_md <- kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer")
 
+# Usamos writeLines para exportar ese objeto a un archivo .md
+writeLines(as.character(tabla_md), "output/tables/AF_cancer/tabla_cox_resumen_af_2009.md")
 
 # 4️⃣ Forest plot para HR deaf_cancer_binaria
 resumen_hr <- resumen %>%
-  filter(term == "af_cancer_binariaCon AF")
+  filter(term == "af_cancer_binariaYes")
 
 ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   geom_pointrange(color = "blue", size = 1.2) +
@@ -347,13 +337,14 @@ ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   ) +
   theme_minimal(base_size = 14)
 
-library(ggplot2)
-library(dplyr)
+
+#Guardar gráfico
+#ggsave("output/graphs/FP_HR_AF_2009.png", width = 10, height = 6, dpi = 300)
 
 # Filtrar solo HR de AF cáncer
 resumen_hr <- resumen %>%
-  filter(term == "af_cancer_binariaCon AF") %>%
-  mutate(modelo = factor(modelo, levels = c("Crudo", "Edad", "Edad+Sexo", "Con todo")))
+  filter(term == "af_cancer_binariaYes") %>%
+  mutate(modelo = factor(modelo, levels = c("Crudo", "Edad", "Edad+Sexo", "Modelo completo")))
 
 # Forest plot mejorado
 ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
@@ -368,7 +359,7 @@ ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   labs(
     x = "",
     y = "HR de AF cáncer (IC 95%)",
-    title = "Forest plot: Efecto de AF cáncerl sobre muerte por cáncer",
+    title = "Forest plot: Efecto de AF cáncer sobre muerte por cáncer",
     subtitle = "Comparación entre modelos ajustados",
     caption = "HR = hazard ratio; IC = intervalo de confianza 95%"
   ) +
@@ -383,20 +374,17 @@ ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   )
 
 
-library(dplyr)
-library(ggplot2)
-library(stringr)
 
 # --- Forest plot ENS 2009 (objeto: resumen) ---
 df_forest_2009 <- resumen %>%
-  filter(term %in% c("af_cancer_binariaCon AF", "sexoMujer", "as.factor(sexo)Mujer")) %>%
+  filter(term %in% c("af_cancer_binariaYes", "sexoFemale")) %>%
   mutate(
     variable = case_when(
-      term == "af_cancer_binariaCon AF" ~ "AF familiar (Con AF vs Sin AF)",
-      term %in% c("sexoMujer", "as.factor(sexo)Mujer") ~ "Sexo (Mujer vs Hombre)",
+      term == "af_cancer_binariaYes" ~ "AF familiar (Con AF vs Sin AF)",
+      term %in% c("sexoFemale") ~ "Sexo (Mujer vs Hombre)",
       TRUE ~ term
     ),
-    modelo = factor(modelo, levels = c("Crudo", "Edad", "Edad+Sexo", "Con todo"))
+    modelo = factor(modelo, levels = c("Crudo", "Edad", "Edad+Sexo", "Modelo completo"))
   ) %>%
   arrange(variable, modelo) %>%
   mutate(item = paste(modelo, variable, sep = " · "),
@@ -428,5 +416,5 @@ p_forest_2009 <- ggplot(df_forest_2009, aes(x = HR, y = item, color = variable))
 
 print(p_forest_2009)
 
-# Guardar (opcional)
-# ggsave("forest_af_y_sexo_ENS2009.png", p_forest_2009, width = 8, height = 5, dpi = 300)
+#Guardar gráfico
+#ggsave("output/graphs/FP_HR_AF_2009.png", width = 10, height = 6, dpi = 300)
