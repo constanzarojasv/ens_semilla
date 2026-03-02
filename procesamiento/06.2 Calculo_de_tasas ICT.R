@@ -144,6 +144,7 @@ analisis2003_cancer_5y_ict <- analizar_tasa_cancer_5y(
 
 # Para ver los resultados:
 print(analisis2003_cancer_5y_ict$resultados_tabla)
+print(analisis2003_cancer_5y_ict$test_estadistico)
 
 # 2009
 analisis2009_cancer_5y_ict <- analizar_tasa_cancer_5y(
@@ -156,6 +157,7 @@ analisis2009_cancer_5y_ict <- analizar_tasa_cancer_5y(
 
 # Para ver los resultados:
 print(analisis2009_cancer_5y_ict$resultados_tabla)
+print(analisis2009_cancer_5y_ict$test_estadistico)
 
 # 2016
 analisis2016_cancer_5y_ict <- analizar_tasa_cancer_5y(
@@ -168,3 +170,5 @@ analisis2016_cancer_5y_ict <- analizar_tasa_cancer_5y(
 
 # Para ver los resultados:
 print(analisis2016_cancer_5y_ict$resultados_tabla)
+# Para ver el p-valor:
+print(analisis2016_cancer_5y_ict$test_estadistico)
