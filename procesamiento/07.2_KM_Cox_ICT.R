@@ -164,8 +164,8 @@ ggplot(df_km, aes(x = tiempo, y = supervivencia, color = grupo, fill = grupo)) +
     subtitle = "ENS 2003 - Con Intervalos de Confianza al 95%",
     x = "Años de seguimiento",
     y = "Probabilidad de Supervivencia",
-    color = "AF Cáncer",
-    fill = "AF Cáncer" # Asegura que la leyenda combine línea y sombreado
+    color = "ICT aumentado",
+    fill = "ICT aumentado" # Asegura que la leyenda combine línea y sombreado
   ) +
   
   # Tema minimalista
@@ -197,15 +197,15 @@ ens2003_final %>%
     max_tiempo = max(tiempo_total, na.rm = TRUE)
   )
 
-# Sobrevida a los 5 años (Grupo Con AF)
+# Sobrevida a los 5 años 
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 
-# Sobrevida a los 10 años (Grupo Con AF)
+# Sobrevida a los 10 años 
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
 
 ####### KAPLAN MEIER 2003 EGRESO Y DEFUNCION #####################################################################################
-# Filtrar datos sin NA en AF
+# Filtrar datos sin NA 
 ens2003_final <- ens2003_final %>%
   filter(!is.na(ictaumentado))
 
@@ -292,12 +292,12 @@ ggplot(df_km, aes(x = tiempo, y = supervivencia, color = grupo, fill = grupo)) +
   scale_fill_manual(values = c("#2980b9", "#c0392b")) + 
   
   labs(
-    title = "Curva de Kaplan-Meier (Muerte por Cáncer)",
+    title = "Curva de Kaplan-Meier (Muerte o Egreso por cáncer)",
     subtitle = "ENS 2003 - Con Intervalos de Confianza al 95%",
     x = "Años de seguimiento",
     y = "Probabilidad de Supervivencia",
-    color = "AF Cáncer",
-    fill = "AF Cáncer" # Asegura que la leyenda combine línea y sombreado
+    color = "ICT aumentado",
+    fill = "ICT aumentado" # Asegura que la leyenda combine línea y sombreado
   ) +
   
   # Tema minimalista
@@ -329,10 +329,10 @@ ens2003_final %>%
     max_tiempo = max(tiempo_total, na.rm = TRUE)
   )
 
-# Sobrevida a los 5 años (Grupo Con AF)
+# Sobrevida a los 5 años (Grupo Con ict aumentado)
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 
-# Sobrevida a los 10 años (Grupo Con AF)
+# Sobrevida a los 10 años (Grupo sin)
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
 
@@ -340,7 +340,7 @@ km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
 
 ####### KAPLAN MEIER 2009 #####
-# Filtrar datos sin NA en AF
+# Filtrar datos sin NA 
 ens2009_final <- ens2009_final %>%
   filter(!is.na(ictaumentado))
 
@@ -429,8 +429,8 @@ ggplot(df_km, aes(x = tiempo, y = supervivencia, color = grupo, fill = grupo)) +
     subtitle = "ENS 2009 - Con Intervalos de Confianza al 95%",
     x = "Años de seguimiento",
     y = "Probabilidad de Supervivencia",
-    color = "AF Cáncer",
-    fill = "AF Cáncer" # Asegura que la leyenda combine línea y sombreado
+    color = "ICT aumentado",
+    fill = "ICT aumentado" # Asegura que la leyenda combine línea y sombreado
   ) +
   
   # Tema minimalista
@@ -462,16 +462,16 @@ ens2009_final %>%
     max_tiempo = max(tiempo_total, na.rm = TRUE)
   )
 
-# Sobrevida a los 5 años (Grupo Con AF)
+# Sobrevida a los 5 años (Grupo Con ict>)
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 
-# Sobrevida a los 10 años (Grupo Con AF)
+# Sobrevida a los 10 años (Grupo sin)
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
 
 
 ####### KAPLAN MEIER 2009 EGRESO Y DEFUNCION ############################################################
-# Filtrar datos sin NA en AF
+# Filtrar datos sin NA 
 ens2009_final <- ens2009_final %>%
   filter(!is.na(ictaumentado))
 
@@ -556,12 +556,12 @@ ggplot(df_km, aes(x = tiempo, y = supervivencia, color = grupo, fill = grupo)) +
   scale_fill_manual(values = c("#2980b9", "#c0392b")) + 
   
   labs(
-    title = "Curva de Kaplan-Meier (Muerte por Cáncer)",
+    title = "Curva de Kaplan-Meier (Muerte o egreso por cáncer)",
     subtitle = "ENS 2009 - Con Intervalos de Confianza al 95%",
     x = "Años de seguimiento",
     y = "Probabilidad de Supervivencia",
-    color = "AF Cáncer",
-    fill = "AF Cáncer" # Asegura que la leyenda combine línea y sombreado
+    color = "ICT aumentado",
+    fill = "ICT aumentado" # Asegura que la leyenda combine línea y sombreado
   ) +
   
   # Tema minimalista
@@ -593,10 +593,10 @@ ens2009_final %>%
     max_tiempo = max(tiempo_total, na.rm = TRUE)
   )
 
-# Sobrevida a los 5 años (Grupo Con AF)
+# Sobrevida a los 5 años (Grupo )
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 
-# Sobrevida a los 10 años (Grupo Con AF)
+# Sobrevida a los 10 años (Grupo sin ict aumentado)
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
 
@@ -607,7 +607,7 @@ km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
 
 ####### KAPLAN MEIER 2016 #####
-# Filtrar datos sin NA en AF
+# Filtrar datos sin NA 
 ens2016_final <- ens2016_final %>%
   filter(!is.na(ictaumentado))
 
@@ -696,8 +696,8 @@ ggplot(df_km, aes(x = tiempo, y = supervivencia, color = grupo, fill = grupo)) +
     subtitle = "ENS 2016 - Con Intervalos de Confianza al 95%",
     x = "Años de seguimiento",
     y = "Probabilidad de Supervivencia",
-    color = "AF Cáncer",
-    fill = "AF Cáncer" # Asegura que la leyenda combine línea y sombreado
+    color = "ICT aumentado",
+    fill = "ICT aumentado" # Asegura que la leyenda combine línea y sombreado
   ) +
   
   # Tema minimalista
@@ -729,15 +729,15 @@ ens2016_final %>%
     max_tiempo = max(tiempo_total, na.rm = TRUE)
   )
 
-# Sobrevida a los 5 años (Grupo Con AF)
+# Sobrevida a los 5 años (Grupo Con ict aumentado)
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 
-# Sobrevida a los 10 años (Grupo Con AF)
+# Sobrevida a los 10 años (Grupo sin ict aumentado)
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
 
 ####### KAPLAN MEIER 2016 EGRESO Y DEFUNCION #############################################
-# Filtrar datos sin NA en AF
+# Filtrar datos sin NA 
 ens2016_final <- ens2016_final %>%
   filter(!is.na(ictaumentado))
 
@@ -822,12 +822,12 @@ ggplot(df_km, aes(x = tiempo, y = supervivencia, color = grupo, fill = grupo)) +
   scale_fill_manual(values = c("#2980b9", "#c0392b")) + 
   
   labs(
-    title = "Curva de Kaplan-Meier (Muerte por Cáncer)",
+    title = "Curva de Kaplan-Meier (Muerte o egreso por cáncer)",
     subtitle = "ENS 2016 - Con Intervalos de Confianza al 95%",
     x = "Años de seguimiento",
     y = "Probabilidad de Supervivencia",
-    color = "AF Cáncer",
-    fill = "AF Cáncer" # Asegura que la leyenda combine línea y sombreado
+    color = "ICT aumentado",
+    fill = "ICT aumentado" # Asegura que la leyenda combine línea y sombreado
   ) +
   
   # Tema minimalista
@@ -859,10 +859,10 @@ ens2016_final %>%
     max_tiempo = max(tiempo_total, na.rm = TRUE)
   )
 
-# Sobrevida a los 5 años (Grupo Con AF)
+# Sobrevida a los 5 años
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 
-# Sobrevida a los 10 años (Grupo Con AF)
+# Sobrevida a los 10 años
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
 
