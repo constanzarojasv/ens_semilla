@@ -8,6 +8,18 @@ ens2003_final$egreso_cancer <- ifelse(!is.na(ens2003_final$DIAG1_EGR) & grepl("^
 
 ens2003_final$egresoydefuncion <- ifelse(ens2003_final$muerte_cancer == "Cancer death" | ens2003_final$egreso_cancer == "1", 1, 0)
 
+ens2003_final$fechadefinitiva <- if_else(
+  ens2003_final$egresoydefuncion == 1,
+  if_else(!is.na(ens2003_final$FECHA_EGR), ens2003_final$FECHA_EGR, ens2003_final$FECHA_DEF),
+  as.Date(NA) 
+)
+
+
+#Crear nueva variable de días transcurridos
+ens2003_final <- ens2003_final %>%
+  mutate(
+    dias_transcurridosfinal = as.numeric(fechadefinitiva - fecha_encuesta)
+  )
 
 
 
@@ -153,7 +165,7 @@ ens2003_final$ictaumentado <- as.factor(ens2003_final$ictaumentado)
 # Preparar variables
 ens2003_final <- ens2003_final %>%
   mutate(
-    tiempo_total = dias_transcurridos / 365.25,
+    tiempo_total = dias_transcurridosfinal / 365.25,
     # Se ajusta la condición para usar la nueva variable dicotómica
     evento_total = if_else(egresoydefuncion == 1, 1, 0),
     evento_label = factor(evento_total,
@@ -219,8 +231,8 @@ ggplot(df_km, aes(x = tiempo, y = supervivencia, color = grupo, fill = grupo)) +
   geom_step(linewidth = 1, direction = "hv") + 
   
   # Forzar el eje Y para que parta desde 0.9 hasta 1.0
-  scale_y_continuous(limits = c(0.9, 1.0), 
-                     breaks = seq(0.9, 1.0, by = 0.02),
+  scale_y_continuous(limits = c(0.5, 1.0), 
+                     breaks = seq(0.5, 1.0, by = 0.02),
                      labels = scales::percent_format(accuracy = 1)) + 
   
   scale_x_continuous(breaks = seq(0, max(df_km$tiempo, na.rm = TRUE), by = 2)) +
