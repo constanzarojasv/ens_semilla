@@ -11,6 +11,8 @@ ens2003_final <- ens2003_final %>%
                           labels = c("No muertos por cáncer", "Muertes por cáncer"))
   )
 
+ens2003_final$ictaumentado <- as.numeric(ens2003_final$ict >= 0.6)
+
 # --- 2️⃣ Diseño de encuesta ---
 # 1. Definir el diseño original con todos los datos
 survey_design2003 <- svydesign(
@@ -80,6 +82,23 @@ tabla1_depresion_2003 %>%
 #   write_csv(file = "output/tables/tabla1_depresion_2003.csv") # Usando readr
 
 
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#----------------------ICT-------------------------------------------------------
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+
+# 1. Definir el diseño original con todos los datos
+survey_design2003 <- svydesign(
+  id = ~conglomerado,
+  strata = ~estrato,
+  weights = ~FEXP_analisis,
+  data = ens2003_final,
+  nest = TRUE
+)
+
 #tabla 1 2003 para ICT
 # 2. Crear un subconjunto para la variable específica (esto mantiene la integridad del diseño)
 survey_design_ICT_2003 <- subset(survey_design2003, !is.na(ict))
@@ -88,7 +107,7 @@ options(survey.lonely.psu="adjust")
 #2. realizar tabla
 tabla1_ict_2003 <- survey_design_ICT_2003 %>% 
   tbl_svysummary(
-    by = ict, 
+    by = ictaumentado, 
     include = c(edad, Edad_Codificada, sexo, NEDU, zona, fuma, estado_nutricional, a17, muerte_cancer, fallecidos),
     statistic = list(
       all_continuous() ~ "{mean} ({sd})",
