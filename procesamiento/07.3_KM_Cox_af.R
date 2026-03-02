@@ -264,7 +264,10 @@ km_fit_2016[[2]]$surv[max(which(km_fit_2016[[2]]$time <= 10))]
 #Guardar gráfico
 #ggsave("output/graphs/KM_AF_2016.png", width = 10, height = 6, dpi = 300)
 
-####COX con muestra expandida####
+#=======================================================================================
+####COX con muestra expandida 2009####
+#=======================================================================================
+
 # Actualizar el diseño de encuesta para incluir las variables necesarias
 
 survey_designkm <- update(survey_designkm,
@@ -420,3 +423,135 @@ print(p_forest_2009)
 
 #Guardar gráfico
 #ggsave("output/graphs/FP_HR_AF_2009.png", width = 10, height = 6, dpi = 300)
+
+#=========================================================
+#### COX con muestra expandida 2016 ####
+#=========================================================
+
+# 1. Actualizar el diseño de encuesta para incluir las variables de 2016
+survey_designkm_2016 <- update(survey_designkm_2016,
+                        af_cancer_binaria = ens2016_final$af_cancer_binaria,
+                        edad = ens2016_final$edad,
+                        sexo = ens2016_final$sexo,
+                        nedu = ens2016_final$NEDU,
+                        zona = ens2016_final$zona,
+                        AUDIT = ens2016_final$AUDIT_RIESGOSO,
+                        fuma = ens2016_final$fuma,
+                        imc = ens2016_final$imc,
+                        GPAQ = ens2016_final$GPAQ
+                        )
+
+# 2. Modelos de Cox con diseño de encuesta (2016)
+cox_crudo_2016 <- svycoxph(Surv(tiempo_total, evento_total) ~ af_cancer_binaria,
+                      design = survey_designkm_2016)
+
+cox_edad_2016 <- svycoxph(Surv(tiempo_total, evento_total) ~ af_cancer_binaria + edad,
+                     design = survey_designkm_2016)
+
+cox_edad_sexo_2016 <- svycoxph(Surv(tiempo_total, evento_total) ~ af_cancer_binaria + edad + sexo,
+                          design = survey_designkm_2016)
+
+cox_edad_sexo_nedu_2016 <- svycoxph(Surv(tiempo_total, evento_total) ~ af_cancer_binaria + edad + sexo + nedu,
+                               design = survey_designkm_2016)
+
+cox_completo_2016 <- svycoxph(Surv(tiempo_total, evento_total) ~ af_cancer_binaria + edad + sexo + nedu + zona + AUDIT + fuma + imc + GPAQ,
+                       design = survey_designkm_2016)
+
+# 3. Tabla resumen de HR, IC y p-value
+resumen_2016 <- bind_rows(
+  broom::tidy(cox_crudo_2016, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Crudo"),
+  broom::tidy(cox_edad_2016, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad"),
+  broom::tidy(cox_edad_sexo_2016, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad+Sexo"),
+  broom::tidy(cox_completo_2016, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Modelo completo")
+) %>%
+  select(
+    modelo, 
+    term, 
+    HR = estimate, 
+    IC_inf = conf.low, 
+    IC_sup = conf.high, 
+    p.value
+  )
+
+# Mostrar tabla en consola
+kable(resumen_2016, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ENS 2016")
+
+# Guardar la tabla en formato Markdown
+tabla_md_2016 <- kable(resumen_2016, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ENS 2016")
+writeLines(as.character(tabla_md_2016), "output/tables/AF_cancer/tabla_cox_resumen_af_2016.md")
+
+
+# 4. Forest plot para HR de af_cancer_binaria (Mejorado)
+resumen_hr_2016 <- resumen_2016 %>%
+  filter(term == "af_cancer_binariaYes") %>%
+  mutate(modelo = factor(modelo, levels = c("Crudo", "Edad", "Edad+Sexo", "Modelo completo")))
+
+ggplot(resumen_hr_2016, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
+  geom_pointrange(aes(color = modelo), size = 1.1, fatten = 3) +   
+  geom_hline(yintercept = 1, linetype = "dashed", color = "darkgray", size = 0.8) +
+  geom_text(aes(label = paste0(round(HR,2), " [", round(IC_inf,2), "-", round(IC_sup,2), "]")), 
+            hjust = -0.1, size = 4, color = "black") +  
+  coord_flip() +
+  scale_y_continuous(trans = "log10", breaks = c(0.3, 0.5, 0.75, 1, 1.5, 2), 
+                     limits = c(0.25, 2.5)) +  
+  scale_color_brewer(palette = "Set2") +
+  labs(
+    x = "",
+    y = "HR de AF cáncer (IC 95%)",
+    title = "Forest plot: Efecto de AF cáncer sobre muerte por cáncer (ENS 2016)",
+    subtitle = "Comparación entre modelos ajustados",
+    caption = "HR = hazard ratio; IC = intervalo de confianza 95%"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    legend.position = "none",
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(face = "bold", size = 16),
+    plot.subtitle = element_text(size = 13),
+    axis.text = element_text(size = 12)
+  )
+
+# 5. Forest plot comparativo (AF y Sexo) - ENS 2016
+df_forest_2016 <- resumen_2016 %>%
+  filter(term %in% c("af_cancer_binariaYes", "sexoFemale")) %>%
+  mutate(
+    variable = case_when(
+      term == "af_cancer_binariaYes" ~ "AF familiar (Con AF vs Sin AF)",
+      term %in% c("sexoFemale") ~ "Sexo (Mujer vs Hombre)",
+      TRUE ~ term
+    ),
+    modelo = factor(modelo, levels = c("Crudo", "Edad", "Edad+Sexo", "Modelo completo"))
+  ) %>%
+  arrange(variable, modelo) %>%
+  mutate(item = paste(modelo, variable, sep = " · "),
+         item = factor(item, levels = rev(unique(item))))
+
+p_forest_2016 <- ggplot(df_forest_2016, aes(x = HR, y = item, color = variable)) +
+  geom_vline(xintercept = 1, linetype = 2, color = "grey40") +
+  geom_errorbarh(aes(xmin = IC_inf, xmax = IC_sup), height = 0.15, linewidth = 0.8) +
+  geom_point(size = 3) +
+  scale_x_log10(
+    breaks = c(0.5, 1, 2, 3, 5),
+    limits = c(min(0.5, min(df_forest_2016$IC_inf, na.rm=TRUE)*0.9),
+               max(5,   max(df_forest_2016$IC_sup, na.rm=TRUE)*1.1))
+  ) +
+  labs(
+    x = "Hazard Ratio (escala log)",
+    y = NULL,
+    color = NULL,
+    title = "Forest plot — HR de antecedentes familiares y sexo (ENS 2016)",
+    subtitle = "Modelos de Cox ponderados por diseño muestral",
+    caption = "Barras = IC95%. Línea punteada = HR = 1"
+  ) +
+  theme_classic(base_size = 12) +
+  theme(
+    legend.position = "top",
+    plot.title = element_text(face = "bold"),
+    plot.subtitle = element_text(size = 10)
+  )
+
+print(p_forest_2016)
+
+# Guardar gráfico final (descomentar para guardar físicamente)
+# ggsave("output/graphs/FP_HR_AF_2016.png", plot = p_forest_2016, width = 10, height = 6, dpi = 300)
