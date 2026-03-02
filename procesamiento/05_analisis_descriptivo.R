@@ -51,8 +51,8 @@ tabla1_depresion_2003 <- survey_designdepresion2003 %>%
   add_overall(last = FALSE, col_label = "**General (N={N_unweighted})**") %>%
   modify_header(
     label = "**Variable**",
-    stat_1 = "**With symptoms (N={n_unweighted})**",
-    stat_2 = "**Con symptoms (N={n_unweighted})**"
+    stat_1 = "**Without symptoms (N={n_unweighted})**",
+    stat_2 = "**With symptoms (N={n_unweighted})**"
   ) %>%
   bold_labels()
 
@@ -98,7 +98,7 @@ ens2009_final <- ens2009_final %>%
 survey_design2009 <- svydesign(
   id = ~conglomerado,
   strata = ~estrato,
-  weights = ~FEXP_analisis,
+  weights = ~factor_f1,
   data = ens2009_final,
   nest = TRUE
 )
@@ -108,10 +108,10 @@ survey_designdepresion2009 <- subset(survey_design2009, !is.na(Depresion_1_AP))
 options(survey.lonely.psu="adjust")
 
 #2. realizar tabla
-ens2003_final <- ens2003_final %>%
+ens2009_final <- ens2009_final %>%
   mutate(Depresion_1_AP = as_factor(Depresion_1_AP))
 
-tabla1_depresion_2003 <- survey_designdepresion2003 %>% 
+tabla1_depresion_2009 <- survey_designdepresion2009 %>% 
   tbl_svysummary(
     by = Depresion_1_AP, 
     include = c(edad, Edad_Codificada, sexo, NEDU, zona, fuma, estado_nutricional, a17, muerte_cancer, fallecidos),
@@ -129,35 +129,35 @@ tabla1_depresion_2003 <- survey_designdepresion2003 %>%
   add_overall(last = FALSE, col_label = "**General (N={N_unweighted})**") %>%
   modify_header(
     label = "**Variable**",
-    stat_1 = "**With symptoms (N={n_unweighted})**",
-    stat_2 = "**Con symptoms (N={n_unweighted})**"
+    stat_1 = "**Without symptoms (N={n_unweighted})**",
+    stat_2 = "**With symptoms (N={n_unweighted})**"
   ) %>%
   bold_labels()
 
 # 3. Mostrar el resultado
-tabla1_depresion_2003
+tabla1_depresion_2009
 
 # Guardar el objeto intacto
-#saveRDS(tabla1_depresion_2003, file = "output/tables/tabla1_depresion_2003.rds")
+#saveRDS(tabla1_depresion_2009, file = "output/tables/tabla1_depresion_2009.rds")
 
 # (Tus compañeros la podrán abrir en sus computadores usando:)
-# tabla_cargada <- readRDS("output/tables/tabla1_depresion_2003.rds")
+# tabla_cargada <- readRDS("output/tables/tabla1_depresion_2009.rds")
 
 # Convertir a formato tabla de datos (tibble) y guardar
-tabla1_depresion_2003 %>%
+tabla1_depresion_2009 %>%
   as_tibble() %>%
-  export(file = "output/tables/Depresion/tabla1_depresion_2003.xlsx") 
+  export(file = "output/tables/Depresion/tabla1_depresion_2009.xlsx") 
 
 # Convertir a kable y luego a markdown
-tabla1_depresion_2003 %>%
+tabla1_depresion_2009 %>%
   as_kable()
 
 # Guardar el contenido en un objeto
-tabla1_depresion_2003 <- tabla1_depresion_2003 %>%
+tabla1_depresion_2009 <- tabla1_depresion_2009 %>%
   as_kable(format = "markdown")
 
 # Crear el archivo físico
-writeLines(tabla1_depresion_2003, "output/tables/Depresion/tabla1_depresion_2003.md")
+writeLines(tabla1_depresion_2009, "output/tables/Depresion/tabla1_depresion_2009.md")
 
 
 
