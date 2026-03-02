@@ -64,19 +64,19 @@ analizar_tasa_5y <- function(datos, variable_grupo, pesos, conglomerado, estrato
 }
 
 # Ejemplo para ENS 2003
-analisis_depresion_5y <- analizar_tasa_5y(
+analisis2003_ict_5y <- analizar_tasa_5y(
   datos = ens2003_final,
-  variable_grupo = "Depresion_1_AP",
+  variable_grupo = "ictaumentado",
   pesos = "FEXP_analisis",
   conglomerado = "conglomerado",
   estrato = "estrato"
 )
 
 # Para ver la tabla:
-print(analisis_depresion_5y$resultados_tabla)
+print(analisis2003_ict_5y$resultados_tabla)
 
 # Para ver el p-valor:
-print(analisis_depresion_5y$test_estadistico)
+print(analisis2003_ict_5y$test_estadistico)
 
 #LO ANTERIOR ES MORTALIDAD GENERAL. AHORA ES ESPECIFICA POR CANCER
 # 1. Definición de la función con nombre específico para cáncer
@@ -134,14 +134,37 @@ analizar_tasa_cancer_5y <- function(datos, variable_grupo, pesos, conglomerado, 
 
 # --- Ejecución del análisis ---
 # El objeto ahora se llama analisis_cancer_5y_depresion
-analisis_cancer_5y_depresion <- analizar_tasa_cancer_5y(
+analisis2003_cancer_5y_ict <- analizar_tasa_cancer_5y(
   datos = ens2003_final,
-  variable_grupo = "Depresion_1_AP",
+  variable_grupo = "ictaumentado",
   pesos = "FEXP_analisis",
   conglomerado = "conglomerado",
   estrato = "estrato"
 )
 
 # Para ver los resultados:
-print(analisis_cancer_5y_depresion$resultados_tabla)
+print(analisis2003_cancer_5y_ict$resultados_tabla)
 
+# 2009
+analisis2009_cancer_5y_ict <- analizar_tasa_cancer_5y(
+  datos = ens2009_final,
+  variable_grupo = "ictaumentado",
+  pesos = "FEXP1",
+  conglomerado = "conglomerado",
+  estrato = "estrato"
+)
+
+# Para ver los resultados:
+print(analisis2009_cancer_5y_ict$resultados_tabla)
+
+# 2016
+analisis2016_cancer_5y_ict <- analizar_tasa_cancer_5y(
+  datos = ens2016_final,
+  variable_grupo = "ictaumentado",
+  pesos = "Fexp_F1p_Corr",
+  conglomerado = "conglomerado",
+  estrato = "estrato"
+)
+
+# Para ver los resultados:
+print(analisis2016_cancer_5y_ict$resultados_tabla)
