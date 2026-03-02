@@ -1,5 +1,5 @@
 # 0.Cargar librerías
-source("procesamiento/04_etiquetado_variables.R", encoding = "UTF-8")
+source("procesamiento/00_setup.R", encoding = "UTF-8")
 
 ens2003_final$Edad_Codificada
 ens2009_final$Edad_Codificada
@@ -193,3 +193,8 @@ print(analisis_cancer_5y_depresion_2009$resultados_tabla)
 
 # Para ver el p-valor:
 print(analisis_cancer_5y_depresion_2009$test_estadistico)
+
+#################################################################################################
+#tasas a 10 años
+
+
