@@ -149,6 +149,12 @@ print(analisis_depresion_5y_2003$resultados_tabla)
 # Para ver el p-valor:
 print(analisis_depresion_5y_2003$test_estadistico)
 
+# Convierte el data frame a formato Markdown
+tabla_md_depresion_5y_2003 <- kable(analisis_depresion_5y_2003$resultados_tabla, format = "markdown")
+
+# Guarda el resultado en el archivo .md
+writeLines(tabla_md_depresion_5y_2003, "output/tables/tasas/mortalidad_general_depresion_5y_2003.md")
+
 # El objeto ahora se llama analisis_cancer_5y_depresion
 analisis_cancer_5y_depresion_2003 <- analizar_tasa_cancer_5y(
   datos = ens2003_final,
@@ -163,6 +169,12 @@ print(analisis_cancer_5y_depresion_2003$resultados_tabla)
 
 # Para ver el p-valor:
 print(analisis_cancer_5y_depresion_2003$test_estadistico)
+
+# Convierte el data frame a formato Markdown
+tabla_md_cancer_depresion_5y_2003 <- kable(analisis_cancer_5y_depresion_2003$resultados_tabla, format = "markdown")
+
+# Guarda el resultado en el archivo .md
+writeLines(tabla_md_cancer_depresion_5y_2003, "output/tables/tasas/mortalidad_cancer_depresion_5y_2003.md")
 
 # Ejemplo para ENS 2009
 analisis_depresion_5y_2009 <- analizar_tasa_5y(
@@ -179,6 +191,12 @@ print(analisis_depresion_5y_2009$resultados_tabla)
 # Para ver el p-valor:
 print(analisis_depresion_5y_2009$test_estadistico)
 
+# Convierte el data frame a formato Markdown
+tabla_md_depresion_5y_2009 <- kable(analisis_depresion_5y_2009$resultados_tabla, format = "markdown")
+
+# Guarda el resultado en el archivo .md
+writeLines(tabla_md_depresion_5y_2009, "output/tables/tasas/mortalidad_general_depresion_5y_2009.md")
+
 # El objeto ahora se llama analisis_cancer_5y_depresion
 analisis_cancer_5y_depresion_2009 <- analizar_tasa_cancer_5y(
   datos = ens2009_final,
@@ -193,6 +211,12 @@ print(analisis_cancer_5y_depresion_2009$resultados_tabla)
 
 # Para ver el p-valor:
 print(analisis_cancer_5y_depresion_2009$test_estadistico)
+
+# Convierte el data frame a formato Markdown
+tabla_md_cancer_depresion_5y_2009 <- kable(analisis_cancer_5y_depresion_2009$resultados_tabla, format = "markdown")
+
+# Guarda el resultado en el archivo .md
+writeLines(tabla_md_cancer_depresion_5y_2009, "output/tables/tasas/mortalidad_cancer_depresion_5y_2009.md")
 
 #################################################################################################
 #tasas a 10 años
@@ -341,6 +365,12 @@ print(analisis_depresion_10y_2003$resultados_tabla)
 # Para ver el p-valor:
 print(analisis_depresion_10y_2003$test_estadistico)
 
+# Convierte el data frame a formato Markdown
+tabla_md_depresion_10y_2003 <- kable(analisis_depresion_10y_2003$resultados_tabla, format = "markdown")
+
+# Guarda el resultado en el archivo .md
+writeLines(tabla_md_depresion_10y_2003, "output/tables/tasas/mortalidad_general_depresion_10y_2003.md")
+
 # El objeto ahora se llama analisis_cancer_5y_depresion
 analisis_cancer_10y_depresion_2003 <- analizar_tasa_cancer_10y(
   datos = ens2003_final,
@@ -355,6 +385,12 @@ print(analisis_cancer_10y_depresion_2003$resultados_tabla)
 
 # Para ver el p-valor:
 print(analisis_cancer_10y_depresion_2003$test_estadistico)
+
+# Convierte el data frame a formato Markdown
+tabla_md_cancer_depresion_10y_2003 <- kable(analisis_cancer_10y_depresion_2003$resultados_tabla, format = "markdown")
+
+# Guarda el resultado en el archivo .md
+writeLines(tabla_md_cancer_depresion_10y_2003, "output/tables/tasas/mortalidad_cancer_depresion_10y_2003.md")
 
 # Ejemplo para ENS 2009
 analisis_depresion_10y_2009 <- analizar_tasa_10y(
@@ -371,6 +407,12 @@ print(analisis_depresion_10y_2009$resultados_tabla)
 # Para ver el p-valor:
 print(analisis_depresion_10y_2009$test_estadistico)
 
+# Convierte el data frame a formato Markdown
+tabla_md_depresion_10y_2009 <- kable(analisis_depresion_10y_2009$resultados_tabla, format = "markdown")
+
+# Guarda el resultado en el archivo .md
+writeLines(tabla_md_depresion_10y_2009, "output/tables/tasas/mortalidad_general_depresion_10y_2009.md")
+
 # El objeto ahora se llama analisis_cancer_5y_depresion
 analisis_cancer_10y_depresion_2009 <- analizar_tasa_cancer_10y(
   datos = ens2009_final,
@@ -385,4 +427,12 @@ print(analisis_cancer_10y_depresion_2009$resultados_tabla)
 
 # Para ver el p-valor:
 print(analisis_cancer_10y_depresion_2009$test_estadistico)
+
+# Convierte el data frame a formato Markdown
+tabla_md_cancer_depresion_10y_2009 <- kable(analisis_cancer_10y_depresion_2009$resultados_tabla, format = "markdown")
+
+# Guarda el resultado en el archivo .md
+writeLines(tabla_md_cancer_depresion_10y_2009, "output/tables/tasas/mortalidad_cancer_depresion_10y_2009.md")
+
+
 
