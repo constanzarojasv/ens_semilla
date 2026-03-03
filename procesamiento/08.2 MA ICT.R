@@ -219,14 +219,14 @@ forest(m_ict_edadsexo, backtransf = TRUE,
 # Guardar gráfico final (descomentar para guardar físicamente)
 # 1. Abrimos el archivo PNG indicando la ruta y el tamaño
 #png("output/graphs/Metaanalisis_ICT_Modeloedadsexo.png", 
-#    width = 10, height = 5, units = "in", res = 300)
+    width = 10, height = 5, units = "in", res = 300)
 
 # 2. Dibujamos el gráfico
 #forest(m_ict_edadsexo, backtransf = TRUE,
-#       xlab = "Hazard Ratio",
-#       leftlabs = c("Estudio"),
-#       rightlabs = c("HR (IC95%)"),
-#       smlab = "Modelo de efectos aleatorios")
+       xlab = "Hazard Ratio",
+       leftlabs = c("Estudio"),
+       rightlabs = c("HR (IC95%)"),
+       smlab = "Modelo de efectos aleatorios")
 
 # 3. Cerramos el archivo para que se guarde físicamente
 #dev.off()
