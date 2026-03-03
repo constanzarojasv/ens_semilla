@@ -26,7 +26,7 @@ survey_designkm <- svydesign(
   data = ens2003_final,
   nest = TRUE
 )
-options(survey.lonely.psu = "certainty")
+options(survey.lonely.psu = "adjust")
 
 # Kaplan-Meier ponderado con svykm()
 # 1. Recalcular el modelo pidiendo explícitamente los errores estándar (se = TRUE)
@@ -489,7 +489,7 @@ cox_completo_depresion<- svycoxph(Surv(tiempo_total, evento_total) ~ Depresion_1
                        design = survey_designkm2009)
 
 # Tabla resumen de HR, IC y p-value
-resumen <- bind_rows(
+resumen_2009 <- bind_rows(
   broom::tidy(cox_crudo_depresion, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Crudo"),
   broom::tidy(cox_edad_depresion, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad"),
   broom::tidy(cox_edad_sexo_depresion, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad+Sexo"),
@@ -506,19 +506,19 @@ resumen <- bind_rows(
   )
 
 # Mostrar tabla
-kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer segun presencia de sintomas depresivos")
+kable(resumen_2009, digits = 3, caption = "Modelos de Cox para muerte por cáncer segun presencia de sintomas depresivos")
 
 # Generamos la tabla con kable y la guardamos en un objeto
-tabla_md <- kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer segun presencia de sintomas depresivos")
+tabla_md <- kable(resumen_2009, digits = 3, caption = "Modelos de Cox para muerte por cáncer segun presencia de sintomas depresivos")
 
 # Usamos writeLines para exportar ese objeto a un archivo .md
 writeLines(as.character(tabla_md), "output/tables/depresion/tabla_cox_resumen_depresion_2009.md")
 
 # 4️⃣ Forest plot para HR sintomas depresivos
-resumen_hr <- resumen %>%
+resumen_hr_2009 <- resumen_2009 %>%
   filter(term == "Depresion_1_APWith symptoms")
 
-ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
+ggplot(resumen_hr_2009, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   geom_pointrange(color = "blue", size = 1.2) +
   geom_hline(yintercept = 1, linetype = "dashed", color = "red") +
   coord_flip() +
@@ -535,7 +535,7 @@ ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
 #ggsave("output/graphs/FP_HR_AF_2009.png", width = 10, height = 6, dpi = 300)
 
 # Filtrar solo HR de sintomas depresivos
-resumen_hr <- resumen %>%
+resumen_hr_2009 <- resumen_2009 %>%
   filter(term == "Depresion_1_APWith symptoms") %>%
   mutate(modelo = factor(modelo, levels = c("Crudo", "Edad", "Edad+Sexo", "Modelo completo")))
 
@@ -569,7 +569,7 @@ ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
 
 
 # --- Forest plot ENS 2009 (objeto: resumen) ---
-df_forest_2009 <- resumen %>%
+df_forest_2009 <- resumen_2009 %>%
   filter(term %in% c("Depresion_1_APWith symptoms", "sexoFemale")) %>%
   mutate(
     variable = case_when(
