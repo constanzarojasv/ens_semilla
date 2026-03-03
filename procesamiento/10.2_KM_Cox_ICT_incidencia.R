@@ -13,7 +13,7 @@ ens2003_final <- ens2003_final %>%
   mutate(
     tiempo_total = dias_transcurridosfinal / 365.25,
     # Se ajusta la condición para usar la nueva variable dicotómica
-    evento_total = if_else(egresoydefuncion == 1, 1, 0),
+    evento_total = if_else(incidencia == 1, 1, 0),
     evento_label = factor(evento_total,
                           levels = c(0, 1),
                           labels = c("No muertos o egresados por cáncer", "Muertes o egresos por cáncer"))
@@ -132,6 +132,8 @@ km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
 
+ggsave("output/graphs/incidencia/KM_ICT_Incidencia_2003.png", width = 12, height = 8, dpi = 300)
+
 
 
 ###### KAPLAN MEIER 2009 EGRESO Y DEFUNCION ############################################################
@@ -145,7 +147,7 @@ ens2009_final$ictaumentado <- as.factor(ens2009_final$ictaumentado)
 ens2009_final <- ens2009_final %>%
   mutate(
     tiempo_total = dias_transcurridosfinal / 365.25,
-    evento_total = if_else(egresoydefuncion == 1, 1, 0),
+    evento_total = if_else(incidencia == 1, 1, 0),
     evento_label = factor(evento_total,
                           levels = c(0, 1),
                           labels = c("No muertos por cáncer", "Muertes por cáncer"))
@@ -263,6 +265,9 @@ km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 # Sobrevida a los 10 años (Grupo sin ict aumentado)
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
+ggsave("output/graphs/incidencia/KM_ICT_Incidencia_2009.png", width = 12, height = 8, dpi = 300)
+
+
 ####### KAPLAN MEIER 2016 EGRESO Y DEFUNCION #############################################
 # Filtrar datos sin NA 
 ens2016_final <- ens2016_final %>%
@@ -274,7 +279,7 @@ ens2016_final$ictaumentado <- as.factor(ens2016_final$ictaumentado)
 ens2016_final <- ens2016_final %>%
   mutate(
     tiempo_total = dias_transcurridosfinal / 365.25,
-    evento_total = if_else(egresoydefuncion == 1, 1, 0),
+    evento_total = if_else(incidencia == 1, 1, 0),
     evento_label = factor(evento_total,
                           levels = c(0, 1),
                           labels = c("No muertos por cáncer", "Muertes por cáncer"))
@@ -392,6 +397,9 @@ km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 # Sobrevida a los 10 años
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
+ggsave("output/graphs/incidencia/KM_ICT_Incidencia_2016.png", width = 12, height = 8, dpi = 300)
+
+
 
 #=======================================================================================
 ### COX con muestra expandida 2003 - Ajustado para ICT Aumentado  DEFUNCION Y EGRESO####
@@ -400,7 +408,7 @@ km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 ens2003_final <- ens2003_final %>%
   mutate(
     tiempo_total = dias_transcurridosfinal / 365.25,
-    evento_total = if_else(egresoydefuncion == 1, 1, 0),
+    evento_total = if_else(incidencia == 1, 1, 0),
     evento_label = factor(evento_total,
                           levels = c(0, 1),
                           labels = c("No muertos por cáncer", "Muertes por cáncer"))
@@ -467,7 +475,7 @@ kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer - I
 tabla_md <- kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ICT (2003)")
 
 # Exportar tabla (Asegúrate de tener la carpeta output/tables/ICT/ creada)
-writeLines(as.character(tabla_md), "output/tables/ICT/tabla_cox_resumen_ict_2003.md")
+writeLines(as.character(tabla_md), "output/tables/ICT/tabla_cox_incidencia_ict_2003.md")
 
 # 4️⃣ Forest plot para HR de ictaumentado
 resumen_hr <- resumen %>%
@@ -502,7 +510,7 @@ ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   )
 
 # Guardar gráfico
-# ggsave("output/graphs/FP_HR_ICT_2003.png", width = 10, height = 6, dpi = 300)
+ggsave("output/graphs/FP_HRincidencia_ICT_2003.png", width = 10, height = 6, dpi = 300)
 
 # --- Forest plot Comparativo (ICT y Sexo) ---
 df_forest_2003 <- resumen %>%
@@ -546,7 +554,7 @@ p_forest_2003 <- ggplot(df_forest_2003, aes(x = HR, y = item, color = variable))
 print(p_forest_2003)
 
 #Guardar gráfico
-#ggsave("output/graphs/FP_HR_ICT_2003.png", width = 10, height = 6, dpi = 300)
+ggsave("output/graphs/FP_HRincidencia_ICT_2003.png", width = 10, height = 6, dpi = 300)
 
 #=======================================================================================
 ### COX con muestra expandida 2009 - Ajustado para ICT Aumentado  DEFUNCION Y EGRESO####
@@ -555,7 +563,7 @@ print(p_forest_2003)
 ens2009_final <- ens2009_final %>%
   mutate(
     tiempo_total = dias_transcurridosfinal / 365.25,
-    evento_total = if_else(egresoydefuncion == 1, 1, 0),
+    evento_total = if_else(incidencia == 1, 1, 0),
     evento_label = factor(evento_total,
                           levels = c(0, 1),
                           labels = c("No muertos por cáncer", "Muertes por cáncer"))
@@ -624,7 +632,7 @@ kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer - I
 tabla_md <- kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ICT (2009)")
 
 # Exportar tabla (Asegúrate de tener la carpeta output/tables/ICT_cancer/ creada)
-writeLines(as.character(tabla_md), "output/tables/ICT_cancer/tabla_cox_resumen_ict_2009.md")
+writeLines(as.character(tabla_md), "output/tables/ICT/tabla_cox_incidencia_ict_2009.md")
 
 # 4️⃣ Forest plot para HR de ictaumentado
 resumen_hr <- resumen %>%
@@ -659,7 +667,7 @@ ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   )
 
 # Guardar gráfico
-# ggsave("output/graphs/FP_HR_ICT_2009.png", width = 10, height = 6, dpi = 300)
+ggsave("output/graphs/FP_HRincidencia_ICT_2009.png", width = 10, height = 6, dpi = 300)
 
 # --- Forest plot Comparativo (ICT y Sexo) ---
 df_forest_2009 <- resumen %>%
@@ -701,6 +709,7 @@ p_forest_2009 <- ggplot(df_forest_2009, aes(x = HR, y = item, color = variable))
   )
 
 print(p_forest_2009)
+ggsave("output/graphs/FP_HRincidencia_ICT_2009.png", width = 10, height = 6, dpi = 300)
 
 #=======================================================================================
 ### COX con muestra expandida 2016 - Ajustado para ICT Aumentado  DEFUNCION Y EGRESO####
@@ -709,7 +718,7 @@ print(p_forest_2009)
 ens2016_final <- ens2016_final %>%
   mutate(
     tiempo_total = dias_transcurridosfinal / 365.25,
-    evento_total = if_else(egresoydefuncion == 1, 1, 0),
+    evento_total = if_else(incidencia == 1, 1, 0),
     evento_label = factor(evento_total,
                           levels = c(0, 1),
                           labels = c("No muertos por cáncer", "Muertes por cáncer"))
@@ -778,7 +787,7 @@ kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer - I
 tabla_md <- kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ICT (2016)")
 
 # Exportar tabla (Asegúrate de tener la carpeta output/tables/ICT_cancer/ creada)
-writeLines(as.character(tabla_md), "output/tables/ICT_cancer/tabla_cox_resumen_ict_2016.md")
+writeLines(as.character(tabla_md), "output/tables/ICT/tabla_cox_incidencia_ict_2016.md")
 
 # 4️⃣ Forest plot para HR de ictaumentado
 resumen_hr <- resumen %>%
@@ -813,7 +822,7 @@ ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   )
 
 # Guardar gráfico
-# ggsave("output/graphs/FP_HR_ICT_2016.png", width = 10, height = 6, dpi = 300)
+ggsave("output/graphs/FP_HR_ICTincidencia_2016.png", width = 10, height = 6, dpi = 300)
 
 # --- Forest plot Comparativo (ICT y Sexo) ---
 df_forest_2016 <- resumen %>%
@@ -855,3 +864,4 @@ p_forest_2016 <- ggplot(df_forest_2016, aes(x = HR, y = item, color = variable))
   )
 
 print(p_forest_2016)
+ggsave("output/graphs/FP_HRincidencia_ICT_2016.png", width = 10, height = 6, dpi = 300)
