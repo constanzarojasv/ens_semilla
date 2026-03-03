@@ -1,17 +1,17 @@
 #1. INSTALAR PAQUETES
-# install.packages(c(
-#  "haven",
-#  "janitor",
-#  "dplyr",
-#  "psych",
-#  "labelled",
-#  "car",
-#  "lubridate",
-#  "tidyr",
-#  "readr",
-#  "gtsummary",
-#  "survey"
-# ))
+ install.packages(c(
+  "haven",
+  "janitor",
+  "dplyr",
+  "psych",
+  "labelled",
+  "car",
+  "lubridate",
+  "tidyr",
+  "readr",
+ "gtsummary",
+ "survey", "survminer", "ggplot2" , "meta", "Hmisc", "rio" , "tidyverse", "knitr" , "srvyr"
+))
 
 #2. CARGAR LIBRERIAS
 library(haven)
@@ -33,3 +33,4 @@ library(knitr)
 library(survival)
 library(survminer)
 library(ggplot2)
+library(meta)
