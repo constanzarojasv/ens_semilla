@@ -151,6 +151,13 @@ analisis2003_cancer_5y_ict <- analizar_tasa_cancer_5y(
 print(analisis2003_cancer_5y_ict$resultados_tabla)
 print(analisis2003_cancer_5y_ict$test_estadistico)
 
+# Convierte el data frame a formato Markdown
+tabla_md_ICT_5y_2003 <- kable(analisis2003_cancer_5y_ict$resultados_tabla, format = "markdown")
+
+# Guarda el resultado en el archivo .md
+writeLines(tabla_md_ICT_5y_2003, "output/tables/tasas/mortalidad_cancer_ICT_5y_2003.md")
+
+
 # 2009
 analisis2009_cancer_5y_ict <- analizar_tasa_cancer_5y(
   datos = ens2009_final,
@@ -164,6 +171,13 @@ analisis2009_cancer_5y_ict <- analizar_tasa_cancer_5y(
 print(analisis2009_cancer_5y_ict$resultados_tabla)
 print(analisis2009_cancer_5y_ict$test_estadistico)
 
+# Convierte el data frame a formato Markdown
+tabla_md_ICT_5y_2009 <- kable(analisis2009_cancer_5y_ict$resultados_tabla, format = "markdown")
+
+# Guarda el resultado en el archivo .md
+writeLines(tabla_md_ICT_5y_2009, "output/tables/tasas/mortalidad_cancer_ICT_5y_2009.md")
+
+
 # 2016
 analisis2016_cancer_5y_ict <- analizar_tasa_cancer_5y(
   datos = ens2016_final,
@@ -173,6 +187,12 @@ analisis2016_cancer_5y_ict <- analizar_tasa_cancer_5y(
   estrato = "estrato"
 )
 
+# Convierte el data frame a formato Markdown
+tabla_md_ICT_5y_2016 <- kable(analisis2016_cancer_5y_ict$resultados_tabla, format = "markdown")
+
+# Guarda el resultado en el archivo .md
+writeLines(tabla_md_ICT_5y_2016, "output/tables/tasas/mortalidad_cancer_ICT_5y_2016.md")
+
 # Para ver los resultados:
 print(analisis2016_cancer_5y_ict$resultados_tabla)
 # Para ver el p-valor:
@@ -181,21 +201,30 @@ print(analisis2016_cancer_5y_ict$test_estadistico)
 #################################################################################
 #tasas a 10 años
 #################################################################################
+# 0.Cargar librerías
+source("procesamiento/00_setup.R", encoding = "UTF-8")
 
-#funcion para  calcular tasas a 10 años
+ens2003_final$Edad_Codificada
+ens2009_final$Edad_Codificada
+ens2016_final$Edad_Codificada
+ens2003_final$ictaumentado <- as.numeric(ens2003_final$ict >= 0.6)
+ens2009_final$ictaumentado <- as.numeric(ens2009_final$ict >= 0.6)
+ens2016_final$ictaumentado <- as.numeric(ens2016_final$ict >= 0.6)
+
+# Función para calcular tasas a 10 años (Mortalidad General)
 analizar_tasa_10y <- function(datos, variable_grupo, pesos, conglomerado, estrato) {
   
   library(survey)
   library(dplyr)
   
-  # 1. Definir límite de tiempo (10 años)
-  limite2 <- 3652.5
+  # 1. Definir límite de tiempo (10 años = 365.25 * 10)
+  limite <- 3652.5
 
   # 2. Preparar datos (Crear variable de evento y filtrar NAs)
   datos_prep <- datos %>%
     filter(!is.na(!!sym(variable_grupo))) %>% 
     mutate(
-      muerte_10y = if_else(!is.na(FECHA_DEF) & dias_transcurridos <= limite2, 1, 0)
+      muerte_10y = if_else(!is.na(FECHA_DEF) & dias_transcurridos <= limite, 1, 0)
     )
   
   # 3. Crear el diseño muestral
@@ -240,31 +269,31 @@ analizar_tasa_10y <- function(datos, variable_grupo, pesos, conglomerado, estrat
   ))
 }
 
-# Ejemplo para ENS 2003
-analisis_depresion_10y <- analizar_tasa_10y(
+# Ejemplo para ENS 2003 (Mortalidad General)
+analisis2003_ict_10y <- analizar_tasa_10y(
   datos = ens2003_final,
-  variable_grupo = "Depresion_1_AP",
+  variable_grupo = "ictaumentado",
   pesos = "FEXP_analisis",
   conglomerado = "conglomerado",
   estrato = "estrato"
 )
 
 # Para ver la tabla:
-print(analisis_depresion_10y$resultados_tabla)
+print(analisis2003_ict_10y$resultados_tabla)
 
 # Para ver el p-valor:
-print(analisis_depresion_10y$test_estadistico)
+print(analisis2003_ict_10y$test_estadistico)
 
 #LO ANTERIOR ES MORTALIDAD GENERAL. AHORA ES ESPECIFICA POR CANCER
-# 1. Definición de la función con nombre específico para cáncer
-analizar_tasa_cancer_10y <- function(datos, variable_grupo, pesos, conglomerado, estrato, limite2 = 3652.5) {
+# 1. Definición de la función con nombre específico para cáncer a 10 años
+analizar_tasa_cancer_10y <- function(datos, variable_grupo, pesos, conglomerado, estrato, limite = 3652.5) {
   
   # 2. Preparar datos (Evento: Cáncer + Tiempo <= 10 años)
   datos_prep <- datos %>%
     filter(!is.na(!!sym(variable_grupo))) %>% 
     mutate(
       # El evento ocurre solo si es muerte por cáncer Y está dentro del límite
-      muerte_10y = if_else(muerte_cancer == "Cancer death" & dias_transcurridos <= limite2, 1, 0),
+      muerte_10y = if_else(muerte_cancer == "Cancer death" & dias_transcurridos <= limite, 1, 0),
       # Tratamos NAs como 0 (no evento/censura)
       muerte_10y = coalesce(muerte_10y, 0)
     )
@@ -309,12 +338,12 @@ analizar_tasa_cancer_10y <- function(datos, variable_grupo, pesos, conglomerado,
   ))
 }
 
-##############################################################################################
-# Ejecución del análisis ICT a 10 años
-##############################################################################################
+######################################################################################################
+# Ejecución del análisis ICT 10 años (Mortalidad por Cáncer)
+######################################################################################################
 
-# Ejemplo para ENS 2003
-analisis_ICT_10y_2003 <- analizar_tasa_10y(
+# --- 2003 ---
+analisis2003_cancer_10y_ict <- analizar_tasa_cancer_10y(
   datos = ens2003_final,
   variable_grupo = "ictaumentado",
   pesos = "FEXP_analisis",
@@ -322,29 +351,19 @@ analisis_ICT_10y_2003 <- analizar_tasa_10y(
   estrato = "estrato"
 )
 
-# Para ver la tabla:
-print(analisis_ICT_10y_2003$resultados_tabla)
+# Para ver los resultados:
+print(analisis2003_cancer_10y_ict$resultados_tabla)
+print(analisis2003_cancer_10y_ict$test_estadistico)
 
-# Para ver el p-valor:
-print(analisis_ICT_10y_2003$test_estadistico)
+# Convierte el data frame a formato Markdown
+tabla_md_ICT_10y_2003 <- kable(analisis2003_cancer_10y_ict$resultados_tabla, format = "markdown")
 
-# El objeto ahora se llama analisis_cancer_10y_ICT_2003
-analisis_cancer_10y_ICT_2003 <- analizar_tasa_cancer_10y(
-  datos = ens2003_final,
-  variable_grupo = "ictaumentado",
-  pesos = "FEXP_analisis",
-  conglomerado = "conglomerado",
-  estrato = "estrato"
-)
+# Guarda el resultado en el archivo .md
+writeLines(tabla_md_ICT_10y_2003, "output/tables/tasas/mortalidad_cancer_ICT_10y_2003.md")
 
-# Para ver la tabla:
-print(analisis_cancer_10y_ICT_2003$resultados_tabla)
 
-# Para ver el p-valor:
-print(analisis_cancer_10y_ICT_2003$test_estadistico)
-
-# Ejemplo para ENS 2009
-analisis_ICT_10y_2009 <- analizar_tasa_10y(
+# --- 2009 ---
+analisis2009_cancer_10y_ict <- analizar_tasa_cancer_10y(
   datos = ens2009_final,
   variable_grupo = "ictaumentado",
   pesos = "FEXP1",
@@ -352,23 +371,33 @@ analisis_ICT_10y_2009 <- analizar_tasa_10y(
   estrato = "estrato"
 )
 
-# Para ver la tabla:
-print(analisis_ICT_10y_2009$resultados_tabla)
+# Para ver los resultados:
+print(analisis2009_cancer_10y_ict$resultados_tabla)
+print(analisis2009_cancer_10y_ict$test_estadistico)
 
-# Para ver el p-valor:
-print(analisis_ICT_10y_2009$test_estadistico)
+# Convierte el data frame a formato Markdown
+tabla_md_ICT_10y_2009 <- kable(analisis2009_cancer_10y_ict$resultados_tabla, format = "markdown")
 
-# El objeto ahora se llama analisis_cancer_10y_ICT_2009
-analisis_cancer_10y_ICT_2009 <- analizar_tasa_cancer_10y(
-  datos = ens2009_final,
+# Guarda el resultado en el archivo .md
+writeLines(tabla_md_ICT_10y_2009, "output/tables/tasas/mortalidad_cancer_ICT_10y_2009.md")
+
+
+# --- 2016 ---
+analisis2016_cancer_10y_ict <- analizar_tasa_cancer_10y(
+  datos = ens2016_final,
   variable_grupo = "ictaumentado",
-  pesos = "FEXP1",
+  pesos = "Fexp_F1p_Corr",
   conglomerado = "conglomerado",
   estrato = "estrato"
 )
 
-# Para ver la tabla:
-print(analisis_cancer_10y_ICT_2009$resultados_tabla)
+# Convierte el data frame a formato Markdown
+tabla_md_ICT_10y_2016 <- kable(analisis2016_cancer_10y_ict$resultados_tabla, format = "markdown")
 
+# Guarda el resultado en el archivo .md
+writeLines(tabla_md_ICT_10y_2016, "output/tables/tasas/mortalidad_cancer_ICT_10y_2016.md")
+
+# Para ver los resultados:
+print(analisis2016_cancer_10y_ict$resultados_tabla)
 # Para ver el p-valor:
-print(analisis_cancer_10y_ICT_2009$test_estadistico)
+print(analisis2016_cancer_10y_ict$test_estadistico)
