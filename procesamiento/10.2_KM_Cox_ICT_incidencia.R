@@ -453,7 +453,7 @@ cox_completo <- svycoxph(Surv(tiempo_total, evento_total) ~ ictaumentado + edad 
                        design = survey_designkm)
 
 # Tabla resumen de HR, IC y p-value
-resumen <- bind_rows(
+resumen2003 <- bind_rows(
   broom::tidy(cox_crudo, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Crudo"),
   broom::tidy(cox_edad, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad"),
   broom::tidy(cox_edad_sexo, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad+Sexo"),
@@ -469,21 +469,21 @@ resumen <- bind_rows(
   )
 
 # Mostrar tabla
-kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ICT (2003)")
+kable(resumen2003, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ICT (2003)")
 
 # Generamos la tabla con kable y la guardamos en un objeto
-tabla_md <- kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ICT (2003)")
+tabla_md <- kable(resumen2003, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ICT (2003)")
 
 # Exportar tabla (Asegúrate de tener la carpeta output/tables/ICT/ creada)
 writeLines(as.character(tabla_md), "output/tables/ICT/tabla_cox_incidencia_ict_2003.md")
 
 # 4️⃣ Forest plot para HR de ictaumentado
-resumen_hr <- resumen %>%
+resumen_hr2003 <- resumen2003 %>%
   filter(term == "ictaumentado1") %>%
   mutate(modelo = factor(modelo, levels = c("Crudo", "Edad", "Edad+Sexo", "Modelo completo")))
 
 # Forest plot mejorado
-ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
+ggplot(resumen_hr2003, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   geom_pointrange(aes(color = modelo), size = 1.1, fatten = 3) +   
   geom_hline(yintercept = 1, linetype = "dashed", color = "darkgray", linewidth = 0.8) +
   geom_text(aes(label = paste0(round(HR,2), " [", round(IC_inf,2), "-", round(IC_sup,2), "]")), 
@@ -513,7 +513,7 @@ ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
 ggsave("output/graphs/FP_HRincidencia_ICT_2003.png", width = 10, height = 6, dpi = 300)
 
 # --- Forest plot Comparativo (ICT y Sexo) ---
-df_forest_2003 <- resumen %>%
+df_forest_2003 <- resumen2003 %>%
   filter(term %in% c("ictaumentado1", "sexoFemale")) %>%
   mutate(
     variable = case_when(
@@ -610,7 +610,7 @@ cox_completo <- svycoxph(Surv(tiempo_total, evento_total) ~ ictaumentado + edad 
                        design = survey_designkm)
 
 # Tabla resumen de HR, IC y p-value
-resumen <- bind_rows(
+resumen2009 <- bind_rows(
   broom::tidy(cox_crudo, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Crudo"),
   broom::tidy(cox_edad, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad"),
   broom::tidy(cox_edad_sexo, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad+Sexo"),
@@ -626,21 +626,21 @@ resumen <- bind_rows(
   )
 
 # Mostrar tabla
-kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ICT (2009)")
+kable(resumen2009, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ICT (2009)")
 
 # Generamos la tabla con kable y la guardamos en un objeto
-tabla_md <- kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ICT (2009)")
+tabla_md <- kable(resumen2009, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ICT (2009)")
 
 # Exportar tabla (Asegúrate de tener la carpeta output/tables/ICT_cancer/ creada)
 writeLines(as.character(tabla_md), "output/tables/ICT/tabla_cox_incidencia_ict_2009.md")
 
 # 4️⃣ Forest plot para HR de ictaumentado
-resumen_hr <- resumen %>%
+resumen_hr2009 <- resumen2009 %>%
   filter(term == "ictaumentado1") %>%
   mutate(modelo = factor(modelo, levels = c("Crudo", "Edad", "Edad+Sexo", "Modelo completo")))
 
 # Forest plot mejorado
-ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
+ggplot(resumen_hr2009, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   geom_pointrange(aes(color = modelo), size = 1.1, fatten = 3) +   
   geom_hline(yintercept = 1, linetype = "dashed", color = "darkgray", linewidth = 0.8) +
   geom_text(aes(label = paste0(round(HR,2), " [", round(IC_inf,2), "-", round(IC_sup,2), "]")), 
@@ -670,7 +670,7 @@ ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
 ggsave("output/graphs/FP_HRincidencia_ICT_2009.png", width = 10, height = 6, dpi = 300)
 
 # --- Forest plot Comparativo (ICT y Sexo) ---
-df_forest_2009 <- resumen %>%
+df_forest_2009 <- resumen2009 %>%
   filter(term %in% c("ictaumentado1", "sexoFemale")) %>%
   mutate(
     variable = case_when(
@@ -765,7 +765,7 @@ cox_completo <- svycoxph(Surv(tiempo_total, evento_total) ~ ictaumentado + edad 
                        design = survey_designkm)
 
 # Tabla resumen de HR, IC y p-value
-resumen <- bind_rows(
+resumen2016 <- bind_rows(
   broom::tidy(cox_crudo, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Crudo"),
   broom::tidy(cox_edad, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad"),
   broom::tidy(cox_edad_sexo, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad+Sexo"),
@@ -781,21 +781,21 @@ resumen <- bind_rows(
   )
 
 # Mostrar tabla
-kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ICT (2016)")
+kable(resumen2016, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ICT (2016)")
 
 # Generamos la tabla con kable y la guardamos en un objeto
-tabla_md <- kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ICT (2016)")
+tabla_md <- kable(resumen2016, digits = 3, caption = "Modelos de Cox para muerte por cáncer - ICT (2016)")
 
 # Exportar tabla (Asegúrate de tener la carpeta output/tables/ICT_cancer/ creada)
 writeLines(as.character(tabla_md), "output/tables/ICT/tabla_cox_incidencia_ict_2016.md")
 
 # 4️⃣ Forest plot para HR de ictaumentado
-resumen_hr <- resumen %>%
+resumen_hr2016 <- resumen2016 %>%
   filter(term == "ictaumentado1") %>%
   mutate(modelo = factor(modelo, levels = c("Crudo", "Edad", "Edad+Sexo", "Modelo completo")))
 
 # Forest plot mejorado
-ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
+ggplot(resumen_hr2016, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   geom_pointrange(aes(color = modelo), size = 1.1, fatten = 3) +   
   geom_hline(yintercept = 1, linetype = "dashed", color = "darkgray", linewidth = 0.8) +
   geom_text(aes(label = paste0(round(HR,2), " [", round(IC_inf,2), "-", round(IC_sup,2), "]")), 
@@ -825,7 +825,7 @@ ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
 ggsave("output/graphs/FP_HR_ICTincidencia_2016.png", width = 10, height = 6, dpi = 300)
 
 # --- Forest plot Comparativo (ICT y Sexo) ---
-df_forest_2016 <- resumen %>%
+df_forest_2016 <- resumen2016 %>%
   filter(term %in% c("ictaumentado1", "sexoFemale")) %>%
   mutate(
     variable = case_when(
@@ -865,3 +865,4 @@ p_forest_2016 <- ggplot(df_forest_2016, aes(x = HR, y = item, color = variable))
 
 print(p_forest_2016)
 ggsave("output/graphs/FP_HRincidencia_ICT_2016.png", width = 10, height = 6, dpi = 300)
+

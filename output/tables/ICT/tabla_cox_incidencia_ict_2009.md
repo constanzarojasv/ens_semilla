@@ -1,21 +1,21 @@
-Table: Modelos de Cox para muerte por cáncer - ICT (2016)
+Table: Modelos de Cox para muerte por cáncer - ICT (2009)
 
 |modelo          |term           |    HR| IC_inf| IC_sup| p.value|
 |:---------------|:--------------|-----:|------:|------:|-------:|
-|Crudo           |ictaumentado1  | 1.638|  0.774|  3.467|   0.197|
-|Edad            |ictaumentado1  | 1.080|  0.499|  2.337|   0.845|
-|Edad            |edad           | 1.076|  1.043|  1.111|   0.000|
-|Edad+Sexo       |ictaumentado1  | 1.021|  0.509|  2.049|   0.953|
-|Edad+Sexo       |edad           | 1.076|  1.043|  1.111|   0.000|
-|Edad+Sexo       |sexoFemale     | 1.324|  0.691|  2.537|   0.398|
-|Modelo completo |ictaumentado1  | 1.276|  0.530|  3.068|   0.586|
-|Modelo completo |edad           | 1.080|  1.034|  1.128|   0.001|
-|Modelo completo |sexoFemale     | 1.646|  0.551|  4.913|   0.372|
-|Modelo completo |nedu8-12 years | 0.633|  0.199|  2.007|   0.437|
-|Modelo completo |nedu>12 years  | 0.242|  0.031|  1.859|   0.173|
-|Modelo completo |zonaRural      | 0.999|  0.364|  2.741|   0.998|
-|Modelo completo |AUDITYes       | 3.946|  0.958| 16.259|   0.057|
-|Modelo completo |fumaSmoker     | 3.737|  1.833|  7.619|   0.000|
-|Modelo completo |imc            | 0.957|  0.864|  1.061|   0.405|
-|Modelo completo |GPAQModerate   | 0.717|  0.273|  1.884|   0.500|
-|Modelo completo |GPAQHigh       | 0.268|  0.094|  0.763|   0.014|
+|Crudo           |ictaumentado1  | 2.101|  1.290|  3.422|   0.003|
+|Edad            |ictaumentado1  | 1.165|  0.719|  1.888|   0.534|
+|Edad            |edad           | 1.090|  1.073|  1.107|   0.000|
+|Edad+Sexo       |ictaumentado1  | 1.268|  0.773|  2.079|   0.346|
+|Edad+Sexo       |edad           | 1.092|  1.074|  1.110|   0.000|
+|Edad+Sexo       |sexoFemale     | 0.575|  0.344|  0.963|   0.036|
+|Modelo completo |ictaumentado1  | 1.435|  0.762|  2.700|   0.263|
+|Modelo completo |edad           | 1.083|  1.064|  1.103|   0.000|
+|Modelo completo |sexoFemale     | 0.611|  0.365|  1.021|   0.060|
+|Modelo completo |nedu8-12 years | 0.486|  0.271|  0.873|   0.016|
+|Modelo completo |nedu>12 years  | 0.539|  0.208|  1.397|   0.204|
+|Modelo completo |zonaRural      | 1.272|  0.731|  2.212|   0.394|
+|Modelo completo |AUDITYes       | 1.360|  0.569|  3.248|   0.489|
+|Modelo completo |fumaSmoker     | 1.484|  0.827|  2.664|   0.186|
+|Modelo completo |imc            | 0.980|  0.923|  1.040|   0.503|
+|Modelo completo |GPAQModerate   | 0.673|  0.365|  1.241|   0.205|
+|Modelo completo |GPAQHigh       | 0.939|  0.519|  1.700|   0.836|
