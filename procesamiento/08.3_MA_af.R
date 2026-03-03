@@ -1,3 +1,5 @@
+source("procesamiento/07.3_KM_Cox_af.R", encoding = "UTF-8")
+
 # ==========================================
 # 1) META-ANÁLISIS: AF (MODELO COMPLETO)
 # ==========================================
