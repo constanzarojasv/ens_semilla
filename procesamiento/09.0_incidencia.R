@@ -41,7 +41,54 @@ ens2016_final$fechadefinitiva <- if_else(
   as.Date(NA) 
 )
 
+#CONI: con el comando de fechadefinitiva estamos asumiendo que está bien registrado y sí o sí fecha_egr es menor que fecha_def
+#falta agregar un validador como dijo angélica (considerar el mínimo entre ambas fechas si alguna fila tiene ambas)
+#gemini me dijo que usemos pmin() (parallel minimum)
+#VOY A DEJAR EL SCRIPT CON pmin() abajo, para que elijamos cuál usar.
+# ==========================================
+# FECHAS DEFINITIVAS - ENS 2003
+# ==========================================
+ens2003_final$egreso_cancer <- ifelse(!is.na(ens2003_final$DIAG1_EGR) & grepl("^(C|D0|D3|D4)", ens2003_final$DIAG1_EGR) & ens2003_final$DIAG1 != "D469", 1, 0)
 
+ens2003_final$egresoydefuncion <- ifelse(ens2003_final$muerte_cancer == "Cancer death" | ens2003_final$egreso_cancer == "1", 1, 0)
+
+ens2003_final$fechadefinitiva <- if_else(
+  ens2003_final$egresoydefuncion == 1,
+  pmin(ens2003_final$FECHA_EGR, ens2003_final$FECHA_DEF, na.rm = TRUE),
+  as.Date(NA) 
+)
+
+# ==========================================
+# FECHAS DEFINITIVAS - ENS 2009
+# ==========================================
+ens2009_final$egreso_cancer <- ifelse(!is.na(ens2009_final$DIAG1_EGR) & grepl("^(C|D0|D3|D4)", ens2009_final$DIAG1_EGR) & ens2009_final$DIAG1 != "D469", 1, 0)
+
+ens2009_final$egresoydefuncion <- ifelse(ens2009_final$muerte_cancer == "Cancer death" | ens2009_final$egreso_cancer == "1", 1, 0)
+
+ens2009_final$fechadefinitiva <- if_else(
+  ens2009_final$egresoydefuncion == 1,
+  pmin(ens2009_final$FECHA_EGR, ens2009_final$FECHA_DEF, na.rm = TRUE),
+  as.Date(NA) 
+)
+
+# ==========================================
+# FECHAS DEFINITIVAS - ENS 2016
+# ==========================================
+ens2016_final$egreso_cancer <- ifelse(!is.na(ens2016_final$DIAG1_EGR) & grepl("^(C|D0|D3|D4)", ens2016_final$DIAG1_EGR) & ens2016_final$DIAG1 != "D469", 1, 0)
+
+ens2016_final$egresoydefuncion <- ifelse(ens2016_final$muerte_cancer == "Cancer death" | ens2016_final$egreso_cancer == "1", 1, 0)
+
+ens2016_final$fechadefinitiva <- if_else(
+  ens2016_final$egresoydefuncion == 1,
+  pmin(ens2016_final$FECHA_EGR, ens2016_final$FECHA_DEF, na.rm = TRUE),
+  as.Date(NA) 
+)
+
+
+
+
+#=========================================================================
+#ESTO NO LO REVISÉ AÚN (CONI):
 #Crear nueva variable de días transcurridos
 ens2003_final <- ens2003_final %>%
   mutate(
