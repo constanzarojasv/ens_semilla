@@ -130,7 +130,7 @@ km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 # Sobrevida a los 10 años (Grupo Con sintomas depresivos)
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
-ggsave("output/graphs/KM_depresion_2003.png", width = 12, height = 8, dpi = 300)
+#ggsave("output/graphs/KM_depresion_2003.png", width = 12, height = 8, dpi = 300)
 
 #########ENS 2009############################################################################
 # Filtrar datos sin NA en sintomas de presivos
@@ -261,7 +261,7 @@ km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 5))]
 # Sobrevida a los 10 años (Grupo Con sintomas depresivos)
 km_fit[[2]]$surv[max(which(km_fit[[2]]$time <= 10))]
 
-ggsave("output/graphs/KM_depresion_2009.png", width = 12, height = 8, dpi = 300)
+#ggsave("output/graphs/KM_depresion_2009.png", width = 12, height = 8, dpi = 300)
 
 #################################################################################################
 ####COX con muestra expandida####
@@ -280,27 +280,27 @@ survey_designkm2009 <- update(survey_designkm,
     imc = ens2009_final$imc)
 
 # Modelos de Cox con diseño de encuesta
-cox_crudo <- svycoxph(Surv(tiempo_total, evento_total) ~ af_cancer_binaria,
-                      design = survey_designkm)
+cox_crudo_depresion <- svycoxph(Surv(tiempo_total, evento_total) ~ Depresion_1_AP,
+                      design = survey_designkm2009)
 
-cox_edad <- svycoxph(Surv(tiempo_total, evento_total) ~ af_cancer_binaria + edad,
-                     design = survey_designkm)
+cox_edad_depresion <- svycoxph(Surv(tiempo_total, evento_total) ~ Depresion_1_AP + edad,
+                     design = survey_designkm2009)
 
-cox_edad_sexo <- svycoxph(Surv(tiempo_total, evento_total) ~ af_cancer_binaria + edad + sexo,
-                          design = survey_designkm)
+cox_edad_sexo_depresion <- svycoxph(Surv(tiempo_total, evento_total) ~ Depresion_1_AP + edad + sexo,
+                          design = survey_designkm2009)
 
-cox_edad_sexo_nedu <- svycoxph(Surv(tiempo_total, evento_total) ~ af_cancer_binaria + edad + sexo + nedu,
-                               design = survey_designkm)
+cox_edad_sexo_nedu_depresion <- svycoxph(Surv(tiempo_total, evento_total) ~ Depresion_1_AP + edad + sexo + nedu,
+                               design = survey_designkm2009)
 
-cox_completo<- svycoxph(Surv(tiempo_total, evento_total) ~ af_cancer_binaria + edad + sexo + nedu + zona + AUDIT + fuma + imc + GPAQ,
-                       design = survey_designkm)
+cox_completo_depresion<- svycoxph(Surv(tiempo_total, evento_total) ~ Depresion_1_AP + edad + sexo + nedu + zona + fuma + imc + a17,
+                       design = survey_designkm2009)
 
 # Tabla resumen de HR, IC y p-value
 resumen <- bind_rows(
-  broom::tidy(cox_crudo, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Crudo"),
-  broom::tidy(cox_edad, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad"),
-  broom::tidy(cox_edad_sexo, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad+Sexo"),
-  broom::tidy(cox_completo, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Modelo completo")
+  broom::tidy(cox_crudo_depresion, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Crudo"),
+  broom::tidy(cox_edad_depresion, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad"),
+  broom::tidy(cox_edad_sexo_depresion, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Edad+Sexo"),
+  broom::tidy(cox_completo_depresion, exponentiate = TRUE, conf.int = TRUE) %>% mutate(modelo = "Modelo completo")
 ) %>%
   # Como tidy() ya calculó el HR y los IC, solo seleccionamos y renombramos las columnas
   select(
@@ -313,17 +313,17 @@ resumen <- bind_rows(
   )
 
 # Mostrar tabla
-kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer")
+kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer segun presencia de sintomas depresivos")
 
 # Generamos la tabla con kable y la guardamos en un objeto
-tabla_md <- kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer")
+tabla_md <- kable(resumen, digits = 3, caption = "Modelos de Cox para muerte por cáncer segun presencia de sintomas depresivos")
 
 # Usamos writeLines para exportar ese objeto a un archivo .md
-writeLines(as.character(tabla_md), "output/tables/AF_cancer/tabla_cox_resumen_af_2009.md")
+writeLines(as.character(tabla_md), "output/tables/depresion/tabla_cox_resumen_depresion_2009.md")
 
-# 4️⃣ Forest plot para HR deaf_cancer_binaria
+# 4️⃣ Forest plot para HR sintomas depresivos
 resumen_hr <- resumen %>%
-  filter(term == "af_cancer_binariaYes")
+  filter(term == "Depresion_1_APWith symptoms")
 
 ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   geom_pointrange(color = "blue", size = 1.2) +
@@ -331,8 +331,8 @@ ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   coord_flip() +
   labs(
     x = "Modelo",
-    y = "HR de AF cáncerl (IC 95%)",
-    title = "Efecto de AF cáncer sobre muerte por cáncer",
+    y = "HR de sintomas depresivos (IC 95%)",
+    title = "Efecto de la presencia de sintomas depresivos sobre muerte por cáncer",
     subtitle = "Forest plot de HR ajustados por distintos modelos"
   ) +
   theme_minimal(base_size = 14)
@@ -341,9 +341,9 @@ ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
 #Guardar gráfico
 #ggsave("output/graphs/FP_HR_AF_2009.png", width = 10, height = 6, dpi = 300)
 
-# Filtrar solo HR de AF cáncer
+# Filtrar solo HR de sintomas depresivos
 resumen_hr <- resumen %>%
-  filter(term == "af_cancer_binariaYes") %>%
+  filter(term == "Depresion_1_APWith symptoms") %>%
   mutate(modelo = factor(modelo, levels = c("Crudo", "Edad", "Edad+Sexo", "Modelo completo")))
 
 # Forest plot mejorado
@@ -358,8 +358,8 @@ ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   scale_color_brewer(palette = "Set2") +
   labs(
     x = "",
-    y = "HR de AF cáncer (IC 95%)",
-    title = "Forest plot: Efecto de AF cáncer sobre muerte por cáncer",
+    y = "HR de presencia de sintomas depresivos (IC 95%)",
+    title = "Forest plot: Efecto de sintomas depresivos sobre muerte por cáncer",
     subtitle = "Comparación entre modelos ajustados",
     caption = "HR = hazard ratio; IC = intervalo de confianza 95%"
   ) +
@@ -377,10 +377,10 @@ ggplot(resumen_hr, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
 
 # --- Forest plot ENS 2009 (objeto: resumen) ---
 df_forest_2009 <- resumen %>%
-  filter(term %in% c("af_cancer_binariaYes", "sexoFemale")) %>%
+  filter(term %in% c("Depresion_1_APWith symptoms", "sexoFemale")) %>%
   mutate(
     variable = case_when(
-      term == "af_cancer_binariaYes" ~ "AF familiar (Con AF vs Sin AF)",
+      term == "Depresion_1_APWith symptoms" ~ "sintomas depresivos (Con vs Sin)",
       term %in% c("sexoFemale") ~ "Sexo (Mujer vs Hombre)",
       TRUE ~ term
     ),
@@ -417,4 +417,4 @@ p_forest_2009 <- ggplot(df_forest_2009, aes(x = HR, y = item, color = variable))
 print(p_forest_2009)
 
 #Guardar gráfico
-#ggsave("output/graphs/FP_HR_AF_2009.png", width = 10, height = 6, dpi = 300)
+#ggsave("output/graphs/FP_HR_sintomas depresivos_2009.png", width = 10, height = 6, dpi = 300)
