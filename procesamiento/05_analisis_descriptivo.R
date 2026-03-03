@@ -221,6 +221,23 @@ tabla1_ict_2003 <- survey_design_ICT_2003 %>%
 # 3. Mostrar el resultado
 tabla1_ict_2003
 
+# Convertir a formato tabla de datos (tibble) y guardar
+tabla1_ict_2003 %>%
+  as_tibble() %>%
+  export(file = "output/tables/ICT/tabla1_ict_2003.xlsx") 
+
+# Convertir a kable y luego a markdown
+tabla1_ict_2003 %>%
+  as_kable()
+
+# Guardar el contenido en un objeto
+tabla1_ict_2003 <- tabla1_ict_2003 %>%
+  as_kable(format = "markdown")
+
+# Crear el archivo físico
+writeLines(tabla1_ict_2003, "output/tables/ICT/tabla1_ict_2003.md")
+
+
 
 
 #-------------------------2009 ICT
@@ -279,6 +296,21 @@ tabla1_ict_2009 <- survey_design_ICT_2009 %>%
 # 3. Mostrar el resultado
 tabla1_ict_2009
 
+# Convertir a formato tabla de datos (tibble) y guardar
+tabla1_ict_2009 %>%
+  as_tibble() %>%
+  export(file = "output/tables/ICT/tabla1_ict_2009.xlsx") 
+
+# Convertir a kable y luego a markdown
+tabla1_ict_2009 %>%
+  as_kable()
+
+# Guardar el contenido en un objeto
+tabla1_ict_2009 <- tabla1_ict_2009 %>%
+  as_kable(format = "markdown")
+
+# Crear el archivo físico
+writeLines(tabla1_ict_2009, "output/tables/ICT/tabla1_ict_2009.md")
 
 
 
@@ -337,9 +369,21 @@ tabla1_ict_2016 <- survey_design_ICT_2016 %>%
 # 3. Mostrar el resultado
 tabla1_ict_2016
 
+# Convertir a formato tabla de datos (tibble) y guardar
+tabla1_ict_2016 %>%
+  as_tibble() %>%
+  export(file = "output/tables/ICT/tabla1_ict_2016.xlsx") 
 
+# Convertir a kable y luego a markdown
+tabla1_ict_2016 %>%
+  as_kable()
 
+# Guardar el contenido en un objeto
+tabla1_ict_2016 <- tabla1_ict_2016 %>%
+  as_kable(format = "markdown")
 
+# Crear el archivo físico
+writeLines(tabla1_ict_2016, "output/tables/ICT/tabla1_ict_2016.md")
 
 
 
