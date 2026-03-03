@@ -5,6 +5,8 @@
 #sum(ens2003_final$egreso_cancer)
 #hay 250 muertes por cáncer
 
+source("procesamiento/04_etiquetado_variables.R", encoding = "UTF-8")
+
 #LO NUEVO QUE HIZO EL CARLOS ES DESDE AQUÍ:
 
 #Crear nueva variable que combine egresos y defunción
