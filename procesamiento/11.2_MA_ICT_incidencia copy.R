@@ -21,7 +21,7 @@ get_af <- function(df, estudio_lab,
 # Extraer AF de cada ENS y unir
 depresion_2003_incidencia  <- get_af(resumen2003,        "ENS 2003")
 depresion_2009_incidencia  <- get_af(resumen2009,   "ENS 2009-2010")
-depresion_2016_incidencia  <- get_af(resumen2009,   "ENS 2009-2010")
+depresion_2016_incidencia  <- get_af(resumen2009,   "ENS 2016")
 depresion_both_incidencia <- bind_rows(depresion_2003_incidencia , depresion_2009_incidencia, depresion_2016_incidencia)
 
 # Transformar a log(HR) y SE desde IC95%
@@ -79,7 +79,7 @@ get_sexo <- function(df, estudio_lab, modelo_keep = "Modelo completo") {
 
 sx_2003 <- get_sexo(resumen2003, "ENS 2003")
 sx_2009 <- get_sexo(resumen2009, "ENS 2009-2010")
-sx_2016 <- get_sexo(resumen2016, "ENS 2009-2010")
+sx_2016 <- get_sexo(resumen2016, "ENS 2016")
 
 sx_both <- bind_rows(sx_2003, sx_2009, sx_2016) %>%
   mutate(TE = log(HR), seTE = (log(hi)-log(lo))/(2*1.96))
@@ -127,7 +127,7 @@ get_depresion_crudo <- function(df, estudio_lab,
 
 Depresion_crudo_2003  <- get_depresion_crudo(resumen2003,        "ENS 2003")
 Depresion_crudo_2009  <- get_depresion_crudo(resumen2009,   "ENS 2009-2010")
-Depresion_crudo_2016  <- get_depresion_crudo(resumen2016,   "ENS 2009-2010")
+Depresion_crudo_2016  <- get_depresion_crudo(resumen2016,   "ENS 2016")
 Depresion_both_crudo <- bind_rows(Depresion_crudo_2003, Depresion_crudo_2009, Depresion_crudo_2016) %>%
   mutate(
     TE   = log(HR),
@@ -147,7 +147,7 @@ m_depresion_crudo <- metagen(
 summary(m_depresion_crudo)
 forest(m_depresion_crudo, backtransf = TRUE,
        xlab = "Hazard Ratio",
-       main = "Sintomas depresivos Cáncer — Modelo Crudo",
+       main = "ICT — Modelo Crudo",
        leftlabs = c("Estudio"),
        rightlabs = c("HR (IC95%)"),
        smlab = "Modelo de efectos aleatorios")
@@ -187,8 +187,8 @@ get_edadsexo_depresion <- function(df, estudio_lab,
 
 ict_edadsexo_2003  <- get_edadsexo_depresion(resumen2003,        "ENS 2003")
 ict_edadsexo_2009  <- get_edadsexo_depresion(resumen2009,   "ENS 2009-2010")
-
-ict_both_edadsexo <- bind_rows(ict_edadsexo_2003, ict_edadsexo_2009) %>%
+ict_edadsexo_2016  <- get_edadsexo_depresion(resumen2016,   "ENS 2016")
+ict_both_edadsexo <- bind_rows(ict_edadsexo_2003, ict_edadsexo_2009, ict_edadsexo_2016) %>%
   mutate(
     TE   = log(HR),
     seTE = (log(hi) - log(lo)) / (2*1.96)
@@ -208,7 +208,7 @@ summary(m_ict_edadsexo)
 
 forest(m_ict_edadsexo, backtransf = TRUE,
        xlab = "Hazard Ratio",
-       main = "Sintomas depresivos Cáncer — Modelo Edad+Sexo",
+       main = "ICT— Modelo Edad+Sexo",
        leftlabs = c("Estudio"),
        rightlabs = c("HR (IC95%)"),
        smlab = "Modelo de efectos aleatorios")
