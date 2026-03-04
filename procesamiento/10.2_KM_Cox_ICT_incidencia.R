@@ -510,7 +510,7 @@ ggplot(resumen_hr2003, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   )
 
 # Guardar gráfico
-ggsave("output/graphs/FP_HRincidencia_ICT_2003.png", width = 10, height = 6, dpi = 300)
+ggsave("output/graphs/incidencia/HRincidencia_ICT_2003.png", width = 10, height = 6, dpi = 300)
 
 # --- Forest plot Comparativo (ICT y Sexo) ---
 df_forest_2003 <- resumen2003 %>%
@@ -554,7 +554,7 @@ p_forest_2003 <- ggplot(df_forest_2003, aes(x = HR, y = item, color = variable))
 print(p_forest_2003)
 
 #Guardar gráfico
-ggsave("output/graphs/FP_HRincidencia_ICT_2003.png", width = 10, height = 6, dpi = 300)
+ggsave("output/graphs/incidencia/FP_HRincidencia_ICT_2003.png", width = 10, height = 6, dpi = 300)
 
 #=======================================================================================
 ### COX con muestra expandida 2009 - Ajustado para ICT Aumentado  DEFUNCION Y EGRESO####
@@ -667,7 +667,7 @@ ggplot(resumen_hr2009, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   )
 
 # Guardar gráfico
-ggsave("output/graphs/FP_HRincidencia_ICT_2009.png", width = 10, height = 6, dpi = 300)
+ggsave("output/graphs/incidencia/incidencia_ICT_2009.png", width = 10, height = 6, dpi = 300)
 
 # --- Forest plot Comparativo (ICT y Sexo) ---
 df_forest_2009 <- resumen2009 %>%
@@ -709,7 +709,7 @@ p_forest_2009 <- ggplot(df_forest_2009, aes(x = HR, y = item, color = variable))
   )
 
 print(p_forest_2009)
-ggsave("output/graphs/FP_HRincidencia_ICT_2009.png", width = 10, height = 6, dpi = 300)
+ggsave("output/graphs/incidencia/FP_HRincidencia_ICT_2009.png", width = 10, height = 6, dpi = 300)
 
 #=======================================================================================
 ### COX con muestra expandida 2016 - Ajustado para ICT Aumentado  DEFUNCION Y EGRESO####
@@ -822,7 +822,7 @@ ggplot(resumen_hr2016, aes(x = modelo, y = HR, ymin = IC_inf, ymax = IC_sup)) +
   )
 
 # Guardar gráfico
-ggsave("output/graphs/FP_HR_ICTincidencia_2016.png", width = 10, height = 6, dpi = 300)
+ggsave("output/graphs/incidencia/HRincidencia_ICT2016.png", width = 10, height = 6, dpi = 300)
 
 # --- Forest plot Comparativo (ICT y Sexo) ---
 df_forest_2016 <- resumen2016 %>%
@@ -864,5 +864,5 @@ p_forest_2016 <- ggplot(df_forest_2016, aes(x = HR, y = item, color = variable))
   )
 
 print(p_forest_2016)
-ggsave("output/graphs/FP_HRincidencia_ICT_2016.png", width = 10, height = 6, dpi = 300)
+ggsave("output/graphs/incidencia/FP_HRincidencia_ICT_2016.png", width = 10, height = 6, dpi = 300)
 
