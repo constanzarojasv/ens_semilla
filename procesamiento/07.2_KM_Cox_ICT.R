@@ -65,13 +65,20 @@ df_km_2003 <- bind_rows(
 df_km_2003$grupo <- gsub("ictaumentado", "", df_km_2003$grupo)
 
 # Gráfico KM 2003
+# Gráfico KM 2003
 ggplot(df_km_2003, aes(x = tiempo, y = supervivencia, color = grupo, fill = grupo)) +
   geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.15, color = NA) +
   geom_step(linewidth = 1, direction = "hv") + 
-  scale_y_continuous(limits = c(0.9, 1.0), 
-                     breaks = seq(0.9, 1.0, by = 0.02),
+  
+  # 1. Quitar 'limits' de scale_y_continuous
+  scale_y_continuous(breaks = seq(0.9, 1.0, by = 0.02),
                      labels = scales::percent_format(accuracy = 1)) + 
+                     
   scale_x_continuous(breaks = seq(0, max(df_km_2003$tiempo, na.rm = TRUE), by = 2)) +
+  
+  # 2. Añadir coord_cartesian para hacer el zoom sin descartar datos
+  coord_cartesian(ylim = c(0.9, 1.0)) +
+  
   scale_color_manual(values = c("#2980b9", "#c0392b")) + 
   scale_fill_manual(values = c("#2980b9", "#c0392b")) + 
   labs(
@@ -117,6 +124,7 @@ ens2003_final %>%
 km_fit_2003[[2]]$surv[max(which(km_fit_2003[[2]]$time <= 5))]
 km_fit_2003[[2]]$surv[max(which(km_fit_2003[[2]]$time <= 10))]
 
+ggsave("output/graphs/mortalidad/KM_ICT_def_2003.png", width = 18, height = 8, dpi = 300)
 
 #=======================================================================================
 #### COX con muestra expandida 2003 - Ajustado para ICT Aumentado ####
