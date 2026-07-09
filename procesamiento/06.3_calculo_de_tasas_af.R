@@ -72,6 +72,13 @@ print(analisis_af_5y_2009$resultados_tabla)
 # Para ver el p-valor:
 print(analisis_af_5y_2009$test_estadistico)
 
+#Convierte el data frame a formato Markdown
+tabla_md <- kable(analisis_af_5y_2009$resultados_tabla, format = "markdown")
+
+#Guarda el resultado en el archivo .md
+#writeLines(tabla_md, "output/tables/tasas/mortalidad_general_af_5y_2009.md")
+
+
 #LO ANTERIOR ES MORTALIDAD GENERAL. AHORA ES ESPECIFICA POR CANCER
 # 1. Definición de la función con nombre específico para cáncer
 analizar_tasa_cancer_5y_af_2009 <- function(datos, variable_grupo, pesos, conglomerado, estrato, limite = 1826.25) {
@@ -137,6 +144,12 @@ analisis_cancer_5y_af_2009 <- analizar_tasa_cancer_5y_af_2009(
 
 # Para ver los resultados:
 print(analisis_cancer_5y_af_2009$resultados_tabla)
+
+#Convierte el data frame a formato Markdown
+tabla_md <- kable(analisis_cancer_5y_af_2009$resultados_tabla, format = "markdown")
+
+#Guarda el resultado en el archivo .md
+#writeLines(tabla_md, "output/tables/tasas/mortalidad_cancer_af_5y_2009.md")
 
 
 # ==============================================================================
@@ -266,3 +279,176 @@ analisis_cancer_5y_af_2016 <- analizar_tasa_cancer_5y_af_2016(
 print(analisis_af_5y_2016$resultados_tabla)
 
 print(analisis_cancer_5y_af_2016$resultados_tabla)
+
+#Convierte el data frame a formato Markdown
+tabla_md_g_16 <- kable(analisis_af_5y_2016$resultados_tabla, format = "markdown")
+
+#Guarda el resultado en el archivo .md
+#writeLines(tabla_md_g_16, "output/tables/tasas/mortalidad_general_af_5y_2016.md")
+
+#Convierte el data frame a formato Markdown
+tabla_md_c_16 <- kable(analisis_cancer_5y_af_2016$resultados_tabla, format = "markdown")
+
+#Guarda el resultado en el archivo .md
+#writeLines(tabla_md_c_16 , "output/tables/tasas/mortalidad_cancer_af_5y_2016.md")
+
+# ==============================================================================
+# 1. MORTALIDAD GENERAL - ENS 2009 (A 10 AÑOS)
+# ==============================================================================
+
+# Calculo de tasa de mortalidad general según af_cancer_binaria a 10 años
+analizar_tasa_10y_af_2009 <- function(datos, variable_grupo, pesos, conglomerado, estrato) {
+    
+  # 1. Definir límite de tiempo (10 años)
+  limite2 <- 3652.5
+
+  # 2. Preparar datos (Crear variable de evento y filtrar NAs)
+  datos_prep <- datos %>%
+    filter(!is.na(!!sym(variable_grupo))) %>% 
+    mutate(
+      muerte_10y = if_else(!is.na(FECHA_DEF) & dias_transcurridos <= limite2, 1, 0)
+    )
+  
+  # 3. Crear el diseño muestral
+  diseno <- svydesign(
+    id = as.formula(paste0("~", conglomerado)),
+    strata = as.formula(paste0("~", estrato)),
+    weights = as.formula(paste0("~", pesos)),
+    data = datos_prep,
+    nest = TRUE
+  )
+  
+  options(survey.lonely.psu = "adjust")
+  
+  # 4. Calcular tasa (Proporción)
+  tabla_tasa <- svyby(
+    formula = ~muerte_10y,
+    by = as.formula(paste0("~", variable_grupo)),
+    design = diseno,
+    svymean,
+    na.rm = TRUE
+  )
+  
+  # 5. Formatear resultados (Escalar a 1.000)
+  # Usamos pmax(0, ...) para evitar que el límite inferior sea negativo
+  tabla_final <- tabla_tasa %>%
+    mutate(
+      incidencia_1000 = muerte_10y * 1000,
+      lim_inf_1000 = pmax(0, (muerte_10y - 1.96 * se) * 1000),
+      lim_sup_1000 = (muerte_10y + 1.96 * se) * 1000
+    )
+  
+  # 6. Test de Independencia (Rao-Scott)
+  test_rao <- svychisq(
+    formula = as.formula(paste0("~", variable_grupo, " + muerte_10y")),
+    design = diseno
+  )
+  
+  # Retornar una lista con ambos resultados
+  return(list(
+    resultados_tabla = tabla_final,
+    test_estadistico = test_rao
+  ))
+}
+
+# Ejemplo para ENS 2009
+analisis_af_10y_2009 <- analizar_tasa_10y_af_2009(
+  datos = ens2009_final,
+  variable_grupo = "af_cancer_binaria",
+  pesos = "FEXP1",
+  conglomerado = "conglomerado",
+  estrato = "estrato"
+)
+
+# Para ver la tabla:
+print(analisis_af_10y_2009$resultados_tabla)
+
+# Para ver el p-valor:
+print(analisis_af_10y_2009$test_estadistico)
+
+# Convierte el data frame a formato Markdown
+tabla_md <- kable(analisis_af_10y_2009$resultados_tabla, format = "markdown")
+
+# Guarda el resultado en el archivo .md
+#writeLines(tabla_md, "output/tables/tasas/mortalidad_general_af_10y_2009.md")
+
+
+# ==============================================================================
+# 2. MORTALIDAD ESPECIFICA POR CÁNCER - ENS 2009 (A 10 AÑOS)
+# ==============================================================================
+
+# Definición de la función con nombre específico para cáncer a 10 años
+analizar_tasa_cancer_10y_af_2009 <- function(datos, variable_grupo, pesos, conglomerado, estrato, limite2 = 3652.5) {
+  
+  # 2. Preparar datos (Evento: Cáncer + Tiempo <= 10 años)
+  datos_prep <- datos %>%
+    filter(!is.na(!!sym(variable_grupo))) %>% 
+    mutate(
+      # El evento ocurre solo si es muerte por cáncer Y está dentro del límite
+      muerte_10y = if_else(muerte_cancer == "Cancer death" & dias_transcurridos <= limite2, 1, 0),
+      # Tratamos NAs como 0 (no evento/censura)
+      muerte_10y = coalesce(muerte_10y, 0)
+    )
+  
+  # 3. Crear el diseño muestral
+  diseno <- svydesign(
+    id = as.formula(paste0("~", conglomerado)),
+    strata = as.formula(paste0("~", estrato)),
+    weights = as.formula(paste0("~", pesos)),
+    data = datos_prep,
+    nest = TRUE
+  )
+  
+  options(survey.lonely.psu = "adjust")
+  
+  # 4. Calcular tasa (Proporción)
+  tabla_tasa <- svyby(
+    formula = ~muerte_10y,
+    by = as.formula(paste0("~", variable_grupo)),
+    design = diseno,
+    svymean,
+    na.rm = TRUE
+  )
+  
+  # 5. Formatear resultados (Escalar a 1.000)
+  tabla_final <- tabla_tasa %>%
+    mutate(
+      incidencia_cancer_1000 = muerte_10y * 1000,
+      lim_inf_1000 = pmax(0, (muerte_10y - 1.96 * se) * 1000),
+      lim_sup_1000 = (muerte_10y + 1.96 * se) * 1000
+    )
+  
+  # 6. Test de Independencia (Rao-Scott)
+  test_rao <- svychisq(
+    formula = as.formula(paste0("~", variable_grupo, " + muerte_10y")),
+    design = diseno
+  )
+  
+  return(list(
+    resultados_tabla = tabla_final,
+    test_estadistico = test_rao
+  ))
+}
+
+# --- Ejecución del análisis ---
+analisis_cancer_10y_af_2009 <- analizar_tasa_cancer_10y_af_2009(
+  datos = ens2009_final,
+  variable_grupo = "af_cancer_binaria",
+  pesos = "FEXP1",
+  conglomerado = "conglomerado",
+  estrato = "estrato"
+)
+
+# Para ver los resultados:
+print(analisis_cancer_10y_af_2009$resultados_tabla)
+
+# Convierte el data frame a formato Markdown
+tabla_md_cancer <- kable(analisis_cancer_10y_af_2009$resultados_tabla, format = "markdown")
+
+# Guarda el resultado en el archivo .md
+#writeLines(tabla_md_cancer, "output/tables/tasas/mortalidad_cancer_af_10y_2009.md")
+
+
+
+
+
